@@ -1,0 +1,29 @@
+<div class="div_context2">
+    <table class="search_input">
+        <tr>
+            <td>
+                <form method="get">
+                    <input name="s" type="text" placeholder="<?=$this->search_string?>" tabindex="1" id="query" data-url="/search/index/autocomplite">
+                    <button type="submit">Искать</button>
+                </form>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Например: Эффералган
+            </td>
+        </tr>
+    </table>
+    <div class="search_type">
+        <? $rows = round(count($this->international_groups)/3)?>
+        <?foreach ($this->international_groups as $i=>$arIg):?>
+            <?=($i%$rows)?'':($i>=$rows?'</ul><ul style="width:33%">':'<ul style="width:33%">')?>
+                <li<?=$arIg['active']?' class="active"':''?>><a href="<?=$arIg['href']?>"><?=$arIg['sname']?></a></li>
+        <?endforeach;?>
+        <?=$rows?'</ul>':''?>
+    </div>
+    <p style="clear: both">
+    <?foreach ($this->data as $html):?>
+        <?=$html?>
+    <?endforeach;?>
+</div>

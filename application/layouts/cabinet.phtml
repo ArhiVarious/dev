@@ -1,0 +1,106 @@
+<html lang="ru">
+    <head>
+
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+        <meta name="viewport" content="width=1024px, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+        <?=
+                $this->headTitle('СправМедика', Zend_View_Helper_Placeholder_Container_Abstract::PREPEND)
+                ->setSeparator(' ')
+        ?>
+
+        <!-- Stylesheets -->
+        <link rel="stylesheet" href="/spina/css/reset.css" />
+        <link rel="stylesheet" href="/spina/css/icons.css" />
+        <link rel="stylesheet" href="/spina/css/formalize.css" />
+        <link rel="stylesheet" href="/spina/css/checkboxes.css" />
+        <link rel="stylesheet" href="/spina/css/sourcerer.css" />
+        <link rel="stylesheet" href="/spina/css/jqueryui.css" />
+        <link rel="stylesheet" href="/spina/css/tipsy.css" />
+        <link rel="stylesheet" href="/spina/css/calendar.css" />
+        <link rel="stylesheet" href="/spina/css/tags.css" />
+        <link rel="stylesheet" href="/spina/css/main.css" />
+        <link rel="stylesheet" type="text/css" media="print" href="/spina/css/print.css" />
+        <link rel="stylesheet" media="all and (orientation:portrait)" href="/spina/css/portrait.css" />
+        <link rel="apple-touch-icon" href="./apple-touch-icon-precomposed.png" />
+        <link rel="shortcut icon" href="../../favicon.ico" type="image/x-icon" />
+
+        <!--[if lt IE 9]>
+            <script src="/spina/js/html5shiv.js"></script>
+            <script src="/spina/js/excanvas.js"></script>
+        <![endif]-->
+        <meta charset="UTF-8"></head>
+
+    <body>
+
+        <!-- Primary navigation -->
+        <nav id="primary">
+            <ul>
+                <li>
+                    <a href="../../dashboard.html">
+                        <span class="glyph dashboard"></span>
+                        Dashboard
+                    </a>
+                </li>
+                <li >
+                    <a href="<?=$this->url(array("module"=>"cabinet","controller"=>"index","action"=>"reports"))?>">
+                        <span class="glyph chart"></span>
+                        Отчёты
+                    </a>
+                </li>
+                <li >
+                    <a href="../../forms/forms/index.html">
+                        <span class="glyph listicon"></span>
+                        Номенклатура
+                    </a>
+                </li>
+                <li class="active">
+                    <a href="../tables/index.html">
+                        <span class="glyph download"></span>
+                        Загрузка
+                    </a>
+                </li>
+                <li class="bottom">
+                    <a href="<?=$this->url(array("module"=>"cabinet","controller"=>"user","action"=>"logout"))?>">
+                        <span class="glyph quit"></span>
+                        Log out
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        
+        <?if($this->child_menu):?>
+        <nav id="secondary">
+            <ul>
+                <?  foreach ($this->child_menu as $arFirm):?>
+                    <li ><a href="<?=$this->url(array("module"=>"cabinet","controller"=>"index","action"=>"firm", "id"=>$arFirm['id']))?>"><?=$arFirm["name"]?></a></li>
+                <?  endforeach;?>
+            </ul>
+        </nav>
+        <?endif?>
+
+        <section id="maincontainer">
+            <div id="main">
+                <?=$this->layout()->content ?> 
+            </div>
+        </section>
+        <!-- JavaScript -->
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+        <script>!window.jQuery && document.write('<script src="//yandex.st/jquery/1.9.0/jquery.min.js"><\/script>')</script>
+        <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.0/jquery-ui.min.js"></script>
+        <script>!window.jQuery.datepicker && document.write('<script src="//yandex.st/jquery-ui/1.10.0/jquery-ui.min.js"><\/script>')</script>
+        <script src="/spina/js/jquery.tmpl.min.js"></script>
+        <script src="/spina/js/jquery.cookies.js"></script>
+        <script src="/spina/js/formalize.min.js"></script>
+        <script src="/spina/js/jquery.metadata.js"></script>
+        <script src="/spina/js/jquery.validate.js"></script>
+        <script src="/spina/js/jquery.checkboxes.js"></script>
+        <script src="/spina/js/jquery.fileinput.js"></script>
+        <script src="/spina/js/jquery.inputtags.min.js"></script>
+        <!-- Just examples, can be removed in production -->
+        <script src="/spina/js/application.js"></script>
+        <?=$this->headScript() ?>
+    </body>
+</html>

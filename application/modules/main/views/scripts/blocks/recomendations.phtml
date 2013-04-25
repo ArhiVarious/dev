@@ -1,0 +1,22 @@
+<?if($this->adverts):?>
+<div id="div_adv_banner">
+    <div class="hdr_block_main" style="margin-top:1px;"><div class="hdr_block_head">Рекомендации</div>
+        <div class="hdr_block_text">
+            <table class="banner">
+                <?  foreach ($this->adverts as $arAdvert): ?>
+                <tr>
+                    <td class="banner">
+                        <a class="banner" target="_blank" rel="nofollow" href="<?=$arAdvert["href"]?>"><div class="banner_border"><img alt="<?=$arAdvert["inet_advert_banner_ImageAlt"]?>" border="0" width="68" height="68" src="http://ftp.003ms.ru/<?=$arAdvert['inet_advert_banner_ImagePath']?$arAdvert['inet_advert_banner_ImagePath']:'images-goods/_tiny/'.$arAdvert["mpn_inet_ImagePath"]?>"></div></a>
+                    </td>
+                    <td class="banner" style="width:1px">
+                    </td>
+                    <td class="banner">
+                        <b><a class="banner" target="_blank" rel="nofollow" href="<?=$arAdvert["href"]?>"><?=$arAdvert["mpn_inet_description3"]?$arAdvert["mpn_inet_description3"]:$arAdvert['inet_advert_banner_HtmlCode']?></a></b><div class="banner"><?=$arAdvert["inet_advert_banner_name"]?></div>
+                    </td>
+                </tr>
+                <? endforeach; ?>
+            </table>
+        </div>
+    </div>
+</div>
+<?endif?>

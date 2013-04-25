@@ -1,0 +1,2585 @@
+declare @cur_date1 datetime;
+set @cur_date1 = getdate();
+
+----------------------------------------------------
+
+if @complex_id = 0
+begin
+  set @complex_id = (select top 1 complex_id from ch_d_1..complex with(nolock) where area_id = @area_id order by complex_scode asc)
+end
+
+--------------------------------------
+
+declare @firm_flag int;
+declare @mini_site_flag int;
+declare @dd_ShowPrice_min int;
+declare @area_null int;
+
+exec ch_d_1..p_inet_get_FirmFlag
+  @host,
+  @path,
+  @firm_flag output,
+  @mini_site_flag output,
+  @firm_id output,
+  @area_null output, --иначе город по поставщикам не определятся, исправится после перевода поставщиков в поддомены
+  @dd_ShowPrice_min output
+
+
+if @firm_id = -1 begin set @firm_id = 0 end;
+if @dd_id   = -1 begin set @dd_id   = 0 end;
+--if @complex_id <= 0 begin @compex_id = (select top 1 complex_id from complex where area_id = @area_id and complex_scode = 0) end;
+
+----------------------------------------------------
+
+declare @inet_domen_id int;
+set @inet_domen_id = (select inet_domen_id from ch_d_1.dbo.f_inet_domen(@host));
+
+declare @area_domen_id int;
+set @area_domen_id = (select inet_domen_id from ch_site..area where area_id = @area_id);
+
+
+--------------------------------------------
+
+declare @mpn_international_group2_id int;
+declare @mpn_international_group_id  int;
+declare @ig_ShowPrice                int;
+declare @medical_product_name_name   varchar(250);
+declare @mpn_latin                   varchar(250);
+declare @t_mpn                       table(mpn_id int); 
+
+set @mpn_international_group2_id = (select international_group2_id    from ch_site..f_medical_product_name with(nolock) where medical_product_name_id = @medical_product_name_id);
+set @mpn_international_group_id  = (select international_group_id     from ch_site..international_group2   with(nolock) where international_group2_id = @mpn_international_group2_id);
+set @ig_ShowPrice                = (select ig_ShowPrice               from ch_site..international_group    with(nolock) where international_group_id  = @mpn_international_group_id);
+set @medical_product_name_name   = (select medical_product_name_name  from ch_site..f_medical_product_name with(nolock) where medical_product_name_id = @medical_product_name_id);
+set @mpn_latin                   = (select medical_product_name_latin from ch_site..f_medical_product_name with(nolock) where medical_product_name_id = @medical_product_name_id);
+
+insert into @t_mpn 
+select 
+  medical_product_name_id 
+from 
+  ch_site..f_medical_product_name with(nolock)
+where 
+  international_group2_id = @mpn_international_group2_id
+and
+  medical_product_name_id <> (select medical_product_name_id from ch_site..international_group2 with(nolock) where international_group2_id = @mpn_international_group2_id)
+
+
+declare @international_name_id int;
+
+set @international_name_id = 
+isnull((
+select
+  mpn.international_name_id 
+from 
+  ch_site..f_medical_product_name mpn with(nolock)
+    inner join ch_site..international_name i_n with(nolock) on i_n.international_name_id = mpn.international_name_id
+where 
+  mpn.medical_product_name_id = @medical_product_name_id
+and
+  i_n.in_sinonim_flag = cast(1 as bit)
+),0)
+
+
+
+declare @pharmacological_group_id int;
+
+set @pharmacological_group_id = 
+isnull((
+select 
+  pg.pharmacological_group_id 
+from 
+  ch_site..f_medical_product_name mpn with(nolock)
+    inner join ch_site..pharmacological_group pg with(nolock) on pg.pharmacological_group_id = mpn.pharmacological_group_id
+where 
+  medical_product_name_id = @medical_product_name_id
+and
+  pg.pg_analog_flag = cast(1 as bit)
+),0)
+
+
+
+----------------------------------------------------
+
+declare @t  datetime; set @t  = getdate(); 
+declare @t_ datetime; set @t_ = getdate();
+
+declare @t00 int;
+declare @t01 int;
+declare @t02 int;
+declare @t03 int;
+declare @t04 int;
+declare @t05 int;
+declare @t06 int;
+declare @t07 int;
+declare @t08 int;
+declare @t09 int;
+declare @t10 int;
+declare @t11 int;
+declare @t12 int;
+declare @t13 int;
+declare @t14 int;
+declare @t15 int;
+declare @t16 int;
+declare @t17 int;
+declare @t18 int;
+declare @t19 int;
+declare @t20 int;
+declare @t21 int;
+declare @t22 int;
+declare @t23 int;
+declare @t24 int;
+declare @t25 int;
+declare @t26 int;
+declare @t27 int;
+declare @t28 int;
+declare @t29 int;
+declare @t30 int;
+declare @t31 int;
+declare @t32 int;
+declare @t33 int;
+declare @t34 int;
+declare @t35 int;
+declare @t36 int;
+declare @t37 int;
+declare @t38 int;
+declare @t39 int;
+
+set @t00 = 0;
+set @t01 = 0;
+set @t02 = 0;
+set @t03 = 0;
+set @t04 = 0;
+set @t05 = 0;
+set @t06 = 0;
+set @t07 = 0;
+set @t08 = 0;
+set @t09 = 0;
+set @t10 = 0;
+set @t11 = 0;
+set @t12 = 0;
+set @t13 = 0;
+set @t14 = 0;
+set @t15 = 0;
+set @t16 = 0;
+set @t17 = 0;
+set @t18 = 0;
+set @t19 = 0;
+set @t20 = 0;
+set @t21 = 0;
+set @t22 = 0;
+set @t23 = 0;
+set @t24 = 0;
+set @t25 = 0;
+set @t26 = 0;
+set @t27 = 0;
+set @t28 = 0;
+set @t29 = 0;
+set @t30 = 0;
+set @t31 = 0;
+set @t32 = 0;
+set @t33 = 0;
+set @t34 = 0;
+set @t35 = 0;
+set @t36 = 0;
+set @t37 = 0;
+set @t38 = 0;
+set @t39 = 0;
+
+---------------------------------------------------
+
+declare @yandex_stat_id int;
+set @yandex_stat_id = case when @mpn_international_group_id = 1 then 7001 else 7002 end;
+
+declare @advert_text_yandex  varchar(max);
+
+set @advert_text_yandex = dbo.f_yandex_direct(@host, @path, @area_id, @medical_product_name_id);
+
+declare @advert_text_google varchar(max);
+set @advert_text_google =
+
+case when (@path like '/catalog/_/%.aspx') and (@area_id <> 1 /*не челны*/) then
+
+case when @mpn_international_group_id = 1
+then
+'
+<div id="div_google_adv" style="margin:-5px 0px 10px 0px;">
+<script type="text/javascript"><!--
+google_ad_client = "ca-pub-0755311260370307";
+google_ad_slot = "7464118016";
+google_ad_width = 336;
+google_ad_height = 280;
+//-->
+</script>
+<script type="text/javascript"
+src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+</div>
+<script type="text/javascript"> if (window.parent != window) {document.getElementById(''div_google_adv'').style.display = ''none'';}; </script>
+'
+else
+'
+<div id="div_google_adv" style="margin:0px 0px 10px 5px;">
+<script type="text/javascript"><!--
+google_ad_client = "ca-pub-0755311260370307";
+google_ad_slot = "2573257848";
+google_ad_width = 336;
+google_ad_height = 280;
+//-->
+</script>
+<script type="text/javascript"
+src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+</div>
+<script type="text/javascript"> if (window.parent != window) {document.getElementById(''div_google_adv'').style.display = ''none'';}; </script>
+'
+end
+
+else '' end;
+
+
+declare @advert_text1 varchar(max);
+declare @advert_text2 varchar(max);
+
+if @mpn_international_group_id = 1 and @path like '/catalog/_/%.aspx'
+begin
+  set @advert_text1 = @advert_text_yandex;
+  set @advert_text2 = @advert_text_google;
+end
+else
+begin
+  set @advert_text1 = @advert_text_yandex;
+  set @advert_text2 = @advert_text_google;
+end
+
+-----------------------------------------
+
+declare @seed int;
+declare @rand float;
+
+set @seed = cast(cast(getdate() as float)*24.0*60.0*12.0 as int); --меняю инициацию каждые 10 минут
+set @seed = (@seed/1000.0 - cast(@seed/1000 as int))*1000;
+set @rand = rand(@seed);
+
+declare @c int;
+set @c = @complex_id;
+
+----------------------------------------------------
+--определяю выполняется ли поиск по поставщикам
+declare @supplier int;
+if (@area_id = (select area_id from ch_site..area with(nolock) where area_inetname = '~'))
+begin set @supplier = 1; end
+else
+begin set @supplier = 0; end
+
+--количество результатов в поиске при заходе из поисковика
+declare @show_count int;
+if @firm_flag = 0
+begin
+  set @show_count = 10;
+end
+else
+begin
+  set @show_count = 999;
+end
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- показываю дозировки с ценами
+
+if @path = '/catalog/search_price.aspx'  
+begin
+
+------------------------
+
+declare @t_price table(
+  medical_product_id int,
+  medical_product_name_id int,
+  medical_product_name_name varchar(250),
+  medical_product_name varchar(250),
+  price money,
+  price_sort money
+);
+
+insert into @t_price
+select 
+  mp_.medical_product_id,
+  mp_.medical_product_name_id,
+  mp_.medical_product_name_iname as medical_product_name_name,
+  mp_.medical_product_iname as medical_product_name,
+  case when price_min_calc <= 1 then null else price_min_calc end as price,
+  isnull(case when mp_.price_min_calc <= 1 then null else mp_.price_min_calc end, 100000) as price_sort
+from
+  ch_site..f_medical_product_name mpn with(nolock)
+    inner join ch_site..f_medical_product mp_ with(nolock) on mp_.medical_product_name_id = mpn.medical_product_name_id
+where
+  mpn.medical_product_name_id = @medical_product_name_id
+order by
+  price_sort
+
+------------------------
+
+if @new_query = 0
+begin
+
+
+select @advert_text_yandex as href  
+
+union all
+
+select
+  '<table class="table" style="margin:10px 0px 0px 0px;"><tr><td style="background:#e0e0e0;text-align:center;"><b>Дозировка</b></td><td style="background:#e0e0e0;text-align:center;"><b>Примерная цена</b></td></tr>' as href
+
+union all
+
+select
+  '<tr><td><a class=a_black" href="http://' + @host + '/catalog/search_text.aspx?mpn_id=' + cast(medical_product_name_id as varchar) + '&amp;mp_id=' + cast(medical_product_id as varchar) + case when @complex_id <> 0 then '&amp;c_id=' + cast(@complex_id as varchar) else '' end + case when @complex2_id <> 0 then '&amp;c2_id=' + cast(@complex2_id as varchar) else '' end + '">' + medical_product_name_name + ' ' + medical_product_name + '</td><td style="text-align:right;">' + isnull(price, '') + '</td></tr>' as href
+from
+(
+select 
+  medical_product_id,
+  medical_product_name_id,
+  medical_product_name_name,
+  medical_product_name,
+  case when price is null then '<span style="color:gray;">(данные&nbsp;отсутствуют)</span>' else 'от ' + cast(price as varchar) + ' руб' end as price
+from
+  @t_price
+) t
+  
+union all
+
+select
+  '</table>' as href
+
+union all
+  
+select
+'
+<div id="div_google_adv">
+<script type="text/javascript"><!--
+if (window != window.parent) {
+  document.getElementById(''div_google_adv'').style.display = ''none'';
+};
+google_ad_client = "ca-pub-0755311260370307";
+/* 336&#42;280 - Цены */
+google_ad_slot = "1046350316";
+google_ad_width = 336;
+google_ad_height = 200;
+//-->
+</script>
+<script type="text/javascript"
+src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+</div>
+'
+as href    
+
+
+end
+    
+  GOTO B1;
+end 
+
+---------------------------------------------------------------
+-- показываю синонимы и аналоги
+
+set @t01 = cast((cast(getdate() as float) - cast(@t as float))*1000.0*60.0*60.0*24.0 as int); set @t = getdate(); 
+
+if @path = '/catalog/search_analog.aspx'
+begin
+
+
+-----------------------------------------------------------------------------------------------
+-- синонимы
+
+set @t01 = cast((cast(getdate() as float) - cast(@t as float))*1000.0*60.0*60.0*24.0 as int); set @t = getdate(); 
+
+declare @t_sinonim_mpn table(
+  international_name_id int,
+  medical_product_name_id int,
+  medical_product_name_latin varchar(250),
+  medical_product_name_name varchar(250),
+  price varchar(250),
+  price_sort money,
+  inet_article_count int
+);
+
+insert into @t_sinonim_mpn
+select
+  snm.international_name_id,
+  snm.medical_product_name_id,
+  snm.medical_product_name_latin,
+  snm.medical_product_name_name,
+  case when snm.price > 1 then 'от ' + cast(snm.price as varchar) + '&nbsp;руб.' else '' end as price,
+  case when snm.price > 1 then snm.price else 100000 end as price_sort,
+  snm.inet_article_count
+from
+  ch_site..site_sinonim snm with(nolock,index=ix_in)
+where
+  snm.international_name_id = @international_name_id 
+
+
+declare @t_sinonim_presence table(
+  medical_product_name_id int,
+  presence_val int
+);
+
+insert into @t_sinonim_presence
+select 
+  ds_mp.medical_product_name_id,
+  ds_mp.mp_presence_val as presence_val
+from 
+  ch_site..site_a_mpn ds_mp with (nolock,index=ix_in_a)
+where
+  ds_mp.international_name_id = @international_name_id
+and
+  ds_mp.area_id = @area_id
+
+
+declare @t_sinonim table(
+  sort int,
+  medical_product_name_id int,
+  medical_product_id int,
+  medical_product_name_name varchar(250),
+  price varchar(250),
+  price_sort money,
+  area_id int,
+  international_group_code int,
+  medical_product_name_latin varchar(250),
+  presence_val int,
+  inet_article_count int
+);
+
+insert into @t_sinonim
+select
+  5 as sort,
+  mpn.medical_product_name_id,
+  0 as medical_product_id,
+  mpn.medical_product_name_name,
+  mpn.price,
+  mpn.price_sort,
+  @area_id as area_id,
+  100000 as international_group_code,
+  mpn.medical_product_name_latin,
+  prs.presence_val,
+  mpn.inet_article_count
+from 
+  @t_sinonim_mpn mpn
+    left join @t_sinonim_presence prs on prs.medical_product_name_id = mpn.medical_product_name_id
+order by
+  price_sort asc,
+  medical_product_name_name
+
+set @t02 = cast((cast(getdate() as float) - cast(@t as float))*1000.0*60.0*60.0*24.0 as int); set @t = getdate(); 
+
+
+--------------------------------------------------------------------------------------
+-- аналоги
+
+declare @t_analog_mpn table(
+  pharmacological_group_id int,
+  medical_product_name_id int,
+  medical_product_name_name varchar(250),
+  medical_product_name_latin varchar(250),
+  price varchar(250),
+  price_sort money,
+  inet_article_count int
+);
+
+insert into @t_analog_mpn
+select
+  ds_mp.pharmacological_group_id,
+  ds_mp.medical_product_name_id,
+  ds_mp.medical_product_name_name,
+  ds_mp.medical_product_name_latin,
+  case when ds_mp.price > 1 then 'от ' + cast(ds_mp.price as varchar) + '&nbsp;руб.' else '' end as price,
+  case when ds_mp.price > 1 then ds_mp.price else 100000 end as price_sort,
+  ds_mp.inet_article_count
+from
+  ch_site..site_analog ds_mp with(nolock,index=ix_pg)
+where
+  ds_mp.pharmacological_group_id = @pharmacological_group_id
+and
+  not medical_product_name_id in (select medical_product_name_id from @t_sinonim)
+and
+  medical_product_name_id <> @medical_product_name_id
+
+
+declare @t_analog_presence table(
+  medical_product_name_id int,
+  presence_val int
+);
+
+insert into @t_analog_presence
+select 
+  ds_mp.medical_product_name_id,
+  ds_mp.mp_presence_val as presence_val
+from 
+  ch_site..site_a_mpn ds_mp with (nolock,index=ix_pg_a)
+where
+  ds_mp.pharmacological_group_id = @pharmacological_group_id
+and
+  ds_mp.area_id = @area_id
+
+
+declare @t_analog table(
+  sort int,
+  medical_product_name_id int,
+  medical_product_id int,
+  medical_product_name_name varchar(250),
+  price varchar(250),
+  price_sort money,
+  area_id int,
+  international_group_code int,
+  medical_product_name_latin varchar(250),
+  presence_val int,
+  inet_article_count int
+);
+
+insert into @t_analog
+select
+  7 as sort,
+  mpn.medical_product_name_id,
+  0 as medical_product_id,
+  mpn.medical_product_name_name,
+  mpn.price,
+  mpn.price_sort,
+  @area_id as area_id,
+  100000 as international_group_code,
+  mpn.medical_product_name_latin,
+  prs.presence_val,
+  mpn.inet_article_count
+from 
+  @t_analog_mpn mpn
+    left join @t_analog_presence prs on prs.medical_product_name_id = mpn.medical_product_name_id
+order by
+  price_sort asc,
+  medical_product_name_name
+
+---------------------------------------------
+
+set @t03 = cast((cast(getdate() as float) - cast(@t as float))*1000.0*60.0*60.0*24.0 as int); set @t = getdate(); 
+
+
+if @new_query = 0
+begin
+
+
+select
+  '' as href  
+
+union all
+
+select
+  @advert_text_yandex as href  
+
+union all
+
+select --заголовок синонимов
+  '<div><h2>Синонимы "' + (select case when medical_product_name_iname = '' then medical_product_name_name else medical_product_name_iname end from ch_site..f_medical_product_name with(nolock) where medical_product_name_id = @medical_product_name_id) + '"</h2>' +
+  '<p>Синонимы - это медицинские препараты с таким же действующим веществом.<br/>По возможности применения консультируйтесь с врачом.</p>' +
+  '<table class="table"><tr style="text-align:center; font-weight:bold;"><td>Наименование синонима</td><td>Примерная цена</td><td>Наличие</td><td>Описание</td></tr>'
+  as href
+where
+  (select count(*) from @t_sinonim) > 0
+  
+union all
+
+select --синонимы
+  '<tr ' + case when t.medical_product_name_id = @medical_product_name_id then 'style="background:#e0e0e0;"' else '' end + ' >' + 
+  
+  '<td>' + 
+  '<noindex><a title="Посмотреть синонимы и аналоги" href="/catalog/search_analog.aspx?mpn_id=' + cast(t.medical_product_name_id as varchar) + '">' + t.medical_product_name_name + '</a></noindex>' +
+  '</td>' + 
+
+  '<td style="text-align:right;">' + isnull(price, '') + case when price = '' then '' else ' <a href="/catalog/search_price.aspx?mpn_id=' + cast(t.medical_product_name_id as varchar) + '">подробно</a>' end + '</td>' + 
+  
+  '<td>' + 
+  case when presence_val in (4,3,2,1) then '<a title="посмотреть наличие по городу" href="http://' + @host + '/catalog/search_text.aspx?mpn_id=' + cast(t.medical_product_name_id as varchar) + case when @complex_id = 0 then '' else '&amp;c_id=' + cast(@complex_id as varchar) end + case when @complex2_id = 0 then '' else '&amp;c2_id=' + cast(@complex2_id as varchar) end + '">' else '' end + 
+  case 
+    when presence_val in (4,3) then 'в наличии'
+    when presence_val in (2)   then 'в наличие (уточняйте наличие по телефону)'
+    when presence_val in (1)   then 'информация о наличии отсутствует (возможен заказ у поставщика)'
+    --when presence_val in (-1)  then 'информация о наличии отсутствует (данные )'
+    --when presence_val in (-2)  then 'информация о наличии отсутствует (возможность заказа у поставщика уточняйте по телефону)'
+    else '' end +
+  case when presence_val in (4,3,2,1) then '</a>' else '' end + 
+  '</td>' +
+  
+  '<td>' + 
+  case when t.inet_article_count > 0 then '<a onclick="a_TargetAll(this); return false" href="http://003ms.ru/doc/' + t.medical_product_name_latin + '.aspx"> посмотреть </a>' else '' end +
+  '</td>' +
+
+  '</tr>'      
+  as href
+from
+  @t_sinonim t
+
+union all
+
+select
+  '</table></div>' as href
+where
+  (select count(*) from @t_sinonim) > 0
+
+
+union all
+
+select
+'
+<div id="div_google_adv" style="margin:0px 0px 0px -3px;">
+<script type="text/javascript"><!--
+if (window != window.parent) {
+  document.getElementById(''div_google_adv'').style.display = ''none'';
+};
+google_ad_client = "ca-pub-0755311260370307";
+/* 336&#42;280 - Синонимы */
+google_ad_slot = "6917952754";
+google_ad_width = 336;
+google_ad_height = 200;
+//-->
+</script>
+<script type="text/javascript"
+src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+</div>
+' as href   
+
+
+union all
+
+select --заголовок аналогов
+  '<div><h2>Аналоги "' + (select case when medical_product_name_iname = '' then medical_product_name_name else medical_product_name_iname end from ch_site..f_medical_product_name with(nolock) where medical_product_name_id = @medical_product_name_id) + '"</h2>' +
+  '<p>Аналоги - это медицинские препараты с таким же фармакологическим действием.<br/>По возможности применения консультируйтесь с врачом.</p>' +
+  '<table class="table"><tr style="text-align:center; font-weight:bold;"><td>Наименование аналога</td><td>Примерная цена</td><td>Наличие</td><td>Описание</td></tr>'
+  as href
+where
+  (select count(*) from @t_analog) > 0
+
+union all
+
+select --аналоги
+  '<tr ' + case when t.medical_product_name_id = @medical_product_name_id then 'style="background:#e0e0e0;"' else '' end + ' >' + 
+  
+  '<td>' + 
+  '<noindex><a title="Посмотреть синонимы и аналоги" href="/catalog/search_analog.aspx?mpn_id=' + cast(t.medical_product_name_id as varchar) + '">' + t.medical_product_name_name + '</a></noindex>' +
+  '</td>' + 
+
+  '<td style="text-align:right;"> ' + isnull(price, '') + case when price = '' then '' else ' <a href="/catalog/search_price.aspx?mpn_id=' + cast(t.medical_product_name_id as varchar) + '">подробно</a>' end + '</td>' + 
+  
+  '<td>' + 
+  case when presence_val in (4,3,2,1) then '<a title="посмотреть наличие по городу" href="http://' + @host + '/catalog/search_text.aspx?mpn_id=' + cast(t.medical_product_name_id as varchar) + case when @complex_id = 0 then '' else '&amp;c_id=' + cast(@complex_id as varchar) end + case when @complex2_id = 0 then '' else '&amp;c2_id=' + cast(@complex2_id as varchar) end + '">' else '' end + 
+  case 
+    when presence_val in (4,3) then 'в наличии'
+    when presence_val in (2) then 'в наличие (уточняйте наличие по телефону)'
+    when presence_val in (1) then 'под заказ'
+    else '' end +
+  case when presence_val in (4,3,2,1) then '</a>' else '' end + 
+  '</td>' +
+  
+  '<td>' + 
+  case when inet_article_count > 0 then '<a onclick="a_TargetAll(this); return false" href="http://003ms.ru/doc/' + t.medical_product_name_latin + '.aspx"> посмотреть </a>' else '' end +
+  '</td>' +
+
+  '</tr>'      
+  as href
+from
+  @t_analog t
+
+union all
+
+select
+  '</table></div><hr/>' as herf
+where
+  (select count(*) from @t_analog) > 0
+
+
+end
+
+
+  GOTO B1;
+end 
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- вычисляю, где товар есть в наличии
+set @t04 = cast((cast(getdate() as float) - cast(@t as float))*1000.0*60.0*60.0*24.0 as int); set @t = getdate();     
+
+
+declare @international_group2_id int;
+
+set @international_group2_id = 
+(
+select 
+  mpn.international_group2_id
+from 
+  ch_site..f_medical_product_name mpn with(nolock)
+    left join ch_site..international_group2 ig2 with(nolock) on ig2.international_group2_id = mpn.international_group2_id
+where 
+  mpn.medical_product_name_id = @medical_product_name_id
+and
+  ig2.medical_product_name_id = @medical_product_name_id
+)
+
+if (@international_group2_id is null)
+begin
+  set @international_group2_id = 0;
+end
+
+declare @drugstore_id_code3 int;
+set @drugstore_id_code3 = (select drugstore_id from ch_site..drugstore where drugstore_code = 3);
+
+declare @t_site_mpn_dd_mp table(
+  type int,
+  ds_medical_product_inet_id int,
+  area_id int,
+  presence_real_val int,
+  presence_virt_val int,
+  presence_ordr_val int,
+  presence_val int,
+  ds_mp_presence_tsdate datetime,
+  firm_id int,
+  drugstore_id int,
+  drugstore_department_id int,
+  medical_product_name_id int,
+  medical_product_id int,
+  ds_medical_product_id int,
+  inet_flag1 int,
+  inet_flag2 int,
+  doctor_fio varchar(250),
+  doctor_hours varchar(250),
+  doctor_phone varchar(250),
+  ds_medical_product_price money,
+  ds_medical_product_str varchar(250),
+  inet_href varchar(250),
+  ds_mp_inet_description3 varchar(max),
+  ds_mp_inet_description4 varchar(max),
+  ds_mp_inet_ImagePath varchar(250),
+  medical_product_iname varchar(250),
+  medical_product_name_iname varchar(250),
+  complex_id int,
+  ig_goods_flag int,
+  inet_description3 varchar(max),
+  inet_description4 varchar(max),
+  inet_ImagePath varchar(250),
+  inet_ImageLevel varchar(250),
+  price_min money
+)
+
+--------------------------------------------------------------------------------
+
+declare @t_mpn_dd table(mpn_dd_id int)
+
+-- торговые наименования, которые есть в наличии
+if (@international_group2_id = 0)
+begin
+
+insert into @t_mpn_dd
+select
+  mpn_dd_id
+from
+  ch_site..site_a_mpn_dd with(nolock, index=ix_a_mpn)
+where
+  area_id = @area_id
+and
+  medical_product_name_id = @medical_product_name_id
+and
+  (dd_first_flag = 1 and @path like '/catalog/_/%.aspx' or not(@path like '/catalog/_/%.aspx'))
+and
+  (firm_id = @firm_id or @firm_id = 0)
+and
+  (drugstore_department_id = @dd_id or @dd_id = 0)
+and
+  (
+   drugstore_id =  @drugstore_id_code3 and @path =  '/catalog/search_supplier.aspx'
+   or
+   drugstore_id <> @drugstore_id_code3 and @path <> '/catalog/search_supplier.aspx'
+  )
+  
+end
+
+-- подгруппы которые есть в наличии
+if @international_group2_id <> 0
+begin 
+
+insert into @t_mpn_dd
+select
+  mpn_dd_id
+from
+  ch_site..site_a_mpn_dd with(nolock, index=ix_a_ig2)
+where
+  area_id = @area_id
+and
+  international_group2_id = @international_group2_id
+and
+  (firm_id = @firm_id or @firm_id = 0)
+and
+  (drugstore_department_id = @dd_id or @dd_id = 0)
+and
+  (
+   drugstore_id =  @drugstore_id_code3 and @path =  '/catalog/search_supplier.aspx'
+   or
+   drugstore_id <> @drugstore_id_code3 and @path <> '/catalog/search_supplier.aspx'
+  )
+
+end
+
+
+-- рассчетные торговые наименования которые есть в наличии
+set @t05 = cast((cast(getdate() as float) - cast(@t as float))*1000.0*60.0*60.0*24.0 as int); set @t = getdate(); 
+
+
+insert into @t_site_mpn_dd_mp
+select
+  2 as type,
+  ds_mp.id as ds_medical_product_inet_id,
+  @area_id as area_id,
+  presence_real_val,
+  presence_virt_val,
+  presence_ordr_val,
+  mp_presence_val as presence_val,
+  ds_mp_presence_tsdate,
+  firm_id,
+  drugstore_id,
+  drugstore_department_id,
+  medical_product_name_id,
+  medical_product_id,
+  ds_medical_product_id,
+  inet_flag1,
+  inet_flag2,
+  doctor_fio,
+  doctor_hours,
+  doctor_phone,
+  ds_medical_product_price,
+  ds_medical_product_str,
+  inet_href,
+  ds_mp_inet_description3,
+  ds_mp_inet_description4,
+  ds_mp_inet_ImagePath,
+  medical_product_name as medical_product_iname,
+  medical_product_name_name as medical_product_name_iname,
+  complex_id,
+  ig_goods_flag,
+  inet_description3,
+  inet_description4,
+  inet_ImagePath,
+  inet_ImageLevel,
+  price_min
+from 
+  ch_site..site_mpn_dd_mp ds_mp with(nolock,index=ix_id)
+where
+  mpn_dd_id in (select mpn_dd_id from @t_mpn_dd)
+and
+  (@medical_product_id = 0 or medical_product_id = @medical_product_id)
+
+
+set @t06 = cast((cast(getdate() as float) - cast(@t as float))*1000.0*60.0*60.0*24.0 as int); set @t = getdate(); 
+
+
+--------------------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------------------
+-- рассчитываю фильр
+set @t07 = cast((cast(getdate() as float) - cast(@t as float))*1000.0*60.0*60.0*24.0 as int); set @t = getdate(); 
+
+declare @t_filter table(
+  href varchar(max)
+);
+
+insert into @t_filter
+
+-- выбор дозировки
+select
+'
+<script type="text/javascript">
+$(document).ready(function(){
+  $("#iframe_medical_product").colorbox({iframe:true, width:"700px", height:"500px"});
+});
+</script>
+
+<span class="button3">
+<a id="iframe_medical_product" title="Выберите значение" href="/search_ds/wuc_url_iframe.aspx?ift=medical_product">' + 
+
+case when @medical_product_id = 0 
+ then 'Фильтр: выберите значение' 
+  else 'Фильтр: ' + (select mp.medical_product_iname from ch_site..f_medical_product mp with(nolock) where mp.medical_product_id = @medical_product_id) 
+end + 
+
+'
+</a>
+</span>
+'
+  as href
+where
+  (select count(*) from ch_site..f_medical_product with(nolock) where medical_product_name_id = @medical_product_name_id) > 1
+
+-- выбор района
+union all
+
+select
+'
+
+<script type="text/javascript">
+
+$(document).ready(function(){
+  $("#iframe_district").colorbox({iframe:true, width:"700px", height:"500px"});
+});
+
+$(document).ready(function(){
+  $("#iframe_complex").colorbox({iframe:true, width:"700px", height:"500px"});
+});
+
+</script>
+
+'
++
+
+-- выбор комплекса
+
+case when (@path like '/catalog/_/%.aspx' or @path ='/catalog/search_text.aspx') and
+(
+select 
+  count(*) 
+from 
+  ch_site..complex 
+where 
+  area_id = @area_id 
+and 
+  complex_scode >= 2
+) > 1
+then
+'
+<span class="button3">
+<a ' + case when @complex2_id = 0 then 'style="color:red;"' else '' end + ' id="iframe_complex" title="Сортировка по удаленности от места проживания" href="/search_ds/wuc_url_iframe.aspx?ift=complex">' + 
+case when @complex2_id = 0 
+then 
+  'Выберите ' + case when @area_id = 1 then 'комплекс' when @area_id in (22,23) then 'станцию метро' else 'улицу' end 
+else 
+case when @area_id = 1 then 'Комплекс: ' when @area_id in (22,23) then 'Станция метро: ' else 'Улица: ' end +
+(
+select 
+  c.complex_iname
+from 
+  ch_site..complex c 
+where 
+  c.complex_id = @complex2_id
+) 
+end + 
+'
+</a>
+</span>
+'
+
+else '' end
+
+as href
+
+where
+  (@path like '/catalog/_/%.aspx' or @path in ('/catalog/search_text.aspx', '/catalog/search_map.aspx', '/catalog/search_buy.aspx'))
+and
+  (select count(*) from ch_site..complex where area_id = @area_id and complex_scode = 0) = 1
+and
+  (select count(*) from ch_site..complex where area_id = @area_id and complex_scode = 1) >= 2
+
+union all
+
+select
+'
+<span class="button3">
+<a href="/catalog/search_text.aspx?mpn_id=' + cast(@medical_product_name_id as varchar) + '" title="Сбросить фильтр">
+Сбросить фильтр
+</a>
+</span>
+'
+as href
+
+
+if (select count(*) from @t_filter) = 1
+begin
+  delete from @t_filter
+end
+
+
+----------------------------------------------------------------
+-- сначала удаляю лишние записи, если нахожусть на странице search_buy
+-- и если не равен medical_product_id 
+set @t08 = cast((cast(getdate() as float) - cast(@t as float))*1000.0*60.0*60.0*24.0 as int); set @t = getdate(); 
+
+delete from @t_site_mpn_dd_mp
+where
+  medical_product_id <> @medical_product_id and @medical_product_id <> 0
+or
+  (inet_flag1 = cast(0 as bit) and inet_flag2 = cast(0 as bit)) and @path = '/catalog/search_buy.aspx'
+
+----------------------------------------------------------------
+-- если есть аптеки с реальным наличием то остальные можно не показывать
+set @t09 = cast((cast(getdate() as float) - cast(@t as float))*1000.0*60.0*60.0*24.0 as int); set @t = getdate(); 
+
+
+declare @presence_val_max int;
+set @presence_val_max = (select max(presence_val) from @t_site_mpn_dd_mp);
+set @presence_val_max = (select case when @presence_val_max = 4 then 3 else @presence_val_max end);
+
+
+delete from @t_site_mpn_dd_mp
+where
+  ds_medical_product_inet_id in
+(
+select
+  t2.ds_medical_product_inet_id
+from 
+(
+select
+  medical_product_id,
+  case when max(presence_val) = 4 then 3 else max(presence_val) end as presence_val_max
+from
+  @t_site_mpn_dd_mp ds_mp
+    inner join ch_site..drugstore_department dd with(nolock) on ds_mp.drugstore_department_id = dd.drugstore_department_id
+    inner join ch_site..complex              c  with(nolock) on dd.complex_id                 = c.complex_id
+where
+  c.area_id = @area_id --это условие нужно чтобы аптеки с доставкой не перебивали виртуальные аптеки
+group by
+  medical_product_id
+) t1
+  left join @t_site_mpn_dd_mp t2 on t1.medical_product_id = t2.medical_product_id
+where
+  t2.presence_val < t1.presence_val_max 
+)
+
+
+delete from @t_site_mpn_dd_mp
+where
+  presence_val < @presence_val_max
+and
+  inet_flag2 <> CAST(1 as bit)
+
+
+----------------------------------------------------------------
+-- расчитываю CEO текстовку
+set @t10 = cast((cast(getdate() as float) - cast(@t as float))*1000.0*60.0*60.0*24.0 as int); set @t = getdate(); 
+
+/*
+declare @t_ceo_text table(
+  href varchar(max)
+);
+
+
+insert into @t_ceo_text
+select 
+  mpn_text2 
+from 
+  c h_d_1.dbo.f_mpn_area_desc(@medical_product_name_id, @area_id, @complex_id, @complex2_id, @host)
+*/
+
+------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------
+-- карта
+set @t11 = cast((cast(getdate() as float) - cast(@t as float))*1000.0*60.0*60.0*24.0 as int); set @t = getdate(); 
+
+if @path = '/catalog/search_map.aspx'
+begin
+
+declare @complex_scale int;
+set @complex_scale = (select complex_scale from ch_site..complex c where c.complex_id = @complex_id);
+
+if @complex_scale = 0
+  set @complex_scale = (select area_scale from ch_site..area a where a.area_id = @area_id);
+
+if @complex_scale = 0
+  if (select complex_scode from ch_site..complex c where c.complex_id = @complex_id) = 0
+    set @complex_scale = 12
+  else
+    set @complex_scale = 13;
+
+-------------------------------
+
+declare @t_map1 table(
+  map_key varchar(250),
+  map_longitude varchar(250),
+  map_latitude varchar(250),
+  map_scale varchar(250),
+  map_type varchar(250)
+);
+
+insert into @t_map1
+select
+  (select ind.yandex_map_key from ch_site..inet_domen ind with(nolock) where ind.inet_domen_id = @inet_domen_id) as map_key,
+
+  case when (select complex_scode from ch_site..complex where complex_id = @complex_id) = 0
+    then replace(cast(a.area_longitude as varchar), ',', '.')
+    else replace(cast(c.complex_longitude as varchar), ',', '.')
+  end as map_longitude,
+
+  case when (select complex_scode from ch_site..complex where complex_id = @complex_id) = 0
+    then replace(cast(a.area_latitude as varchar), ',', '.')
+    else replace(cast(c.complex_latitude as varchar), ',', '.')
+  end as map_latitude,
+
+  case when (select complex_scode from ch_site..complex where complex_id = @complex_id) = 0
+    then cast(@complex_scale as varchar)
+    else cast(case when c.complex_scale = 0 then @complex_scale else c.complex_scale end as varchar)
+  end as map_scale,
+
+  a.area_MapType as map_type
+
+from
+  (select * from ch_site..area where area_id = @area_id) a
+    left join ch_site..complex c with(nolock) on c.complex_id = @complex_id
+
+
+declare @t_map2 table(
+  drugstore_department_id int,
+  longitude varchar(250),
+  latitude varchar(250),
+  dd_inet_name varchar(250),
+  presence_real_val int,
+  drugstore_department_adress varchar(250),
+  area_inetname varchar(250),
+  firm_latin varchar(250)
+);
+
+insert into @t_map2 
+select 
+  dd.drugstore_department_id,
+  replace(cast(max(dd.dd_longitude) as varchar), ',', '.') as longitude,
+  replace(cast(max(dd.dd_latitude) as varchar), ',', '.')  as latitude,
+  replace(max(dd.dd_inet_name), '"', '''''') as dd_inet_name,
+  max(ds_mp.presence_real_val) as presence_real_val,
+  max(dd.drugstore_department_adress) as drugstore_department_adress,
+  max(a.area_inetname) as area_inetname,
+  max(f.firm_latin) as firm_latin
+from 
+  @t_site_mpn_dd_mp ds_mp
+    inner join ch_site..drugstore_department dd with(nolock) on dd.drugstore_department_id = ds_mp.drugstore_department_id
+    inner join ch_site..firm                 f  with(nolock) on f.firm_id = dd.firm_id
+    inner join ch_site..complex              c  with(nolock) on c.complex_id = dd.complex_id
+    inner join ch_site..area                 a  with(nolock) on a.area_id = c.area_id and (a.area_id = @area_id or @supplier = 1)
+    
+where
+  (select complex_scode from ch_site..complex c where c.complex_id = @complex_id) = 0
+or
+  (select complex_scode from ch_site..complex c where c.complex_id = @complex_id) = 1
+  and
+  c.complex_id in (select complex_id from ch_site..complex c where c.district_iname = (select district_iname from ch_site..complex c where c.complex_id = @complex_id))
+group by
+  dd.drugstore_department_id
+
+--------------------------------
+
+if @new_query = 0
+begin
+
+select
+1 as sort,
+@advert_text_yandex as href  
+
+union all
+
+select 
+  2 as sort,
+  '<table class="table_invisible" style="width:100%; margin:6px 0px 0px -3px; text-align:left;"><tr><td class="table_invisible">' as href
+
+union all
+
+select 
+  3 as sort,
+  href
+from
+  @t_filter
+
+union all
+
+select
+  4 as sort,
+  '</td></tr></table>' as href
+
+union all
+
+select
+5 as sort,
+'
+<div id="yandex_map" style="padding:4px 0px 0px 0px;">
+<script src="http://api-maps.yandex.ru/1.1/index.xml?key=' + map_key + '&modules=pmap&wizard=constructor" type="text/javascript"></script>
+<script type="text/javascript">
+  window.onload = function () {
+    var map = new YMaps.Map(document.getElementById("YMapsID"));
+    map.setCenter(new YMaps.GeoPoint(' + map_longitude + ', ' + map_latitude + '), ' + map_scale + ', YMaps.MapType.' + map_type + ');
+    map.addControl(new YMaps.Zoom());
+        YMaps.MapType.PMAP.getName = function () { return "Народная"; };
+        map.addControl(new YMaps.TypeControl([
+            YMaps.MapType.MAP,
+            YMaps.MapType.SATELLITE,
+            YMaps.MapType.PMAP
+        ], [0, 1, 2]));
+    var toolbar = new YMaps.ToolBar();
+    var button = new YMaps.ToolBarButton({caption: "&nbsp;&nbsp;&nbsp;", hint: "Показать координаты центра карты."});
+    YMaps.Events.observe(button, button.Events.Click, function () {alert(this.getCenter());}, map);
+    toolbar.add(button);
+    map.addControl(toolbar);
+'
+as href
+from
+  @t_map1
+
+union all
+
+select 
+  6 as sort,
+  '   
+      var placemark = new YMaps.Placemark(new YMaps.GeoPoint(' + longitude + ', ' + latitude + '), {style: "' + case when presence_real_val = 1 then 'default#hospitalIcon' else 'default#truckIcon' end + '"});
+      placemark.name = "' + replace(dd_inet_name, '"', '&quot;') + '";
+      placemark.description = "' + 
+      case when presence_real_val <> 1 
+        then '<br/><b>Отсутствует в наличии.</b><br/> Возможность заказа у поставщика уточняйте по телефону. <br/><br/>' 
+        else '' end + 'Адрес: ' + replace(drugstore_department_adress, '"', '&quot;') + '<br/><a href=http://' + area_inetname + '.003ms.ru' + '/firm/' + firm_latin + '/shema.aspx?dd_id=' + cast(drugstore_department_id as varchar) + '>посмотреть телефон и схему проезда</a>";
+      map.addOverlay(placemark); 
+  ' as href 
+from 
+  @t_map2
+
+union all
+
+select
+  7 as sort,
+'  
+}
+</script>
+<div style="border:1px solid silver; margin:0px -1px 0px -1px; border-radius:3px;"><div id="YMapsID" style="width:100%;height:700px;"></div></div>
+</div>
+' as href
+
+order by 
+  sort asc
+
+end
+
+set @t12 = cast((cast(getdate() as float) - cast(@t as float))*1000.0*60.0*60.0*24.0 as int); set @t = getdate();     
+  GOTO B1;
+end 
+  
+---------------------------------------------------------------
+-- показываю описание
+set @t13 = cast((cast(getdate() as float) - cast(@t as float))*1000.0*60.0*60.0*24.0 as int); set @t = getdate(); 
+
+if @path like '/doc/_/%.aspx'  
+begin
+
+declare @t_doc table(
+  sort int,
+  ia_title varchar(250),
+  ia_text varchar(max)
+);
+
+insert into @t_doc
+select 
+  iaf.iaf_scode as sort,
+  ia_.ia_title,
+  cast(ia.inet_article_text as varchar(max)) as ia_text
+from 
+  ch_site..inet_article ia with(nolock) 
+    left join ch_site..inet_article_format                              iaf with(nolock) on iaf.inet_article_format_id = ia.inet_article_format_id
+    left join ch_site_code..f_inet_article(@medical_product_name_id, 1) ia_              on ia_.inet_article_id        = ia.inet_article_id
+where
+  ia.medical_product_name_id = @medical_product_name_id 
+and 
+  iaf.inet_article_group_id = 1
+order by 
+  sort asc
+
+-------------------------
+
+if @new_query = 0
+begin
+
+select
+-1 as sort,
+@advert_text_yandex as href  
+
+union all
+
+select 
+  sort,
+  '<h2>' + ia_title + '</h2>' + 
+  '<p>' + replace(ia_text, char(10), '</p><p>') + '<p>' as href
+from 
+  @t_doc
+    
+order by 
+  sort asc    
+
+end
+
+set @t14 = cast((cast(getdate() as float) - cast(@t as float))*1000.0*60.0*60.0*24.0 as int); set @t = getdate(); 
+  GOTO B1;
+end 
+  
+---------------------------------------------------------------
+-- Если выбранный комплекс - это район, удаляю лишние аптеки
+set @t15 = cast((cast(getdate() as float) - cast(@t as float))*1000.0*60.0*60.0*24.0 as int); set @t = getdate(); 
+
+if (select c.complex_scode from ch_site..complex c with(nolock) where c.complex_id = @complex_id) = 1
+begin
+  delete from @t_site_mpn_dd_mp
+  where 
+    not complex_id in (select complex_id from ch_site..complex with(nolock) where district_iname = (select district_iname from ch_site..complex with(nolock) where complex_id = @complex_id))
+end
+
+----------------------------------------------
+-- вычисляю сжатую таблицу чтобы одна организация - одна строка
+set @t16 = cast((cast(getdate() as float) - cast(@t as float))*1000.0*60.0*60.0*24.0 as int); set @t = getdate(); 
+
+declare @t_inet_search_dd table(
+  uid_code varbinary(16),
+  drugstore_department_id int,
+  firm_id int,
+  area_id int,
+  presence_real_val int,
+  presence_virt_val int,
+  presence_ordr_val int,
+  inet_flag1 int,
+  inet_flag2 int,
+  presence_val int,
+  medical_product_id int,
+  rnd float,
+  price_min money,
+  inet_key int,
+  ds_complex_priority float,
+  num int,
+  dd_inet_name varchar(250),
+  dd_inet_note varchar(max),
+  area_FullName varchar(250),
+  district_iname varchar(250),
+  firm_logo_image varchar(250),
+  firm_latin varchar(250)
+);
+
+insert into @t_inet_search_dd
+select
+  newid() as uid_code,
+  ds_mp.drugstore_department_id,
+  ds_mp.firm_id,
+  max(ds_mp.area_id) as area_id, -- потому что данные в аптеке могут быть и в целом по стране и по городу
+  max(ds_mp.presence_real_val) as presence_real_val,
+  max(ds_mp.presence_virt_val) as presence_virt_val,
+  max(ds_mp.presence_ordr_val) as presence_ordr_val,
+  max(ds_mp.inet_flag1) as inet_flag1,
+  max(ds_mp.inet_flag2) as inet_flag2,
+  max(ds_mp.presence_val) as presence_val,
+  cast('' as varchar(8000)) as medical_product_id,
+  cast(cast(newid() as varbinary(2)) as int)/255.0/255.0 as rnd,
+  min(price_min) as price_min,
+  0 as inet_key,
+  0 as ds_complex_priority,
+  0 as num,
+  '' as dd_inet_name,
+  '' as dd_inet_note,
+  '' as area_FullName,
+  '' as district_iname,
+  '' as firm_logo_image,
+  '' as firm_latin
+from 
+  @t_site_mpn_dd_mp ds_mp
+group by
+  ds_mp.firm_id,
+  ds_mp.drugstore_department_id  
+
+
+---------------------------------------------------------------
+-- вычисляю удаленность аптек от выбранного комплекса
+-- определяю порядок в котором будут показываться организации
+set @t17 = cast((cast(getdate() as float) - cast(@t as float))*1000.0*60.0*60.0*24.0 as int); set @t = getdate(); 
+
+
+update @t_inet_search_dd 
+set 
+  [@t_inet_search_dd].inet_key            = t.inet_key,
+  [@t_inet_search_dd].ds_complex_priority = t.ds_complex_priority
+from
+(
+select
+  ds_mp.drugstore_department_id,
+  case when cm_dd.area_id <> @area_id then dd.inet_key - 0.01 else dd.inet_key end as inet_key, -- для того чтобы инет аптека показывалась м/у реальными и виртуальными
+  
+  case when @complex2_id = 0 then ds_mp.rnd/1000000.0 else
+  square(cm.complex_latitude *1.0 - cm_dd.complex_latitude *1.0) +
+  square(cm.complex_longitude*1.0 - cm_dd.complex_longitude*1.0) + ds_mp.rnd/1000000.0
+  end
+  
+  as ds_complex_priority
+from 
+  @t_inet_search_dd ds_mp
+    left join ch_site..drugstore_department dd    with (nolock) on dd.drugstore_department_id    = ds_mp.drugstore_department_id
+    left join ch_site..complex              cm_dd with (nolock) on cm_dd.complex_id              = dd.complex_id
+    left join ch_site..area                 ar_dd with (nolock) on ar_dd.area_id                 = cm_dd.area_id
+    left join ch_site..complex              cm    with (nolock) on cm.complex_id                 = @complex2_id
+    left join ch_site..area                 ar    with (nolock) on ar.area_id                    = cm.area_id
+) t
+where
+  [@t_inet_search_dd].drugstore_department_id = t.drugstore_department_id
+
+---------------------------------------------------------------
+-- вычисляю порядоковый номер организации
+set @t18 = cast((cast(getdate() as float) - cast(@t as float))*1000.0*60.0*60.0*24.0 as int); set @t = getdate(); 
+
+declare @t_inet_search_dd2 table(
+  num int not null identity(1,1),
+  drugstore_department_id int
+);
+
+insert into @t_inet_search_dd2 (drugstore_department_id)
+select 
+  drugstore_department_id
+from 
+  @t_inet_search_dd
+order by
+  inet_key desc,          -- сначала платные организации
+  presence_val desc,      -- сначала аптеки в которых это реально есть, затем виртуальные, затем под заказ
+  ds_complex_priority asc -- сначала более близкие организации по удаленности от выбранного района
+
+
+update @t_inet_search_dd set [@t_inet_search_dd].num = t.num
+from
+  @t_inet_search_dd2 t
+where
+  [@t_inet_search_dd].drugstore_department_id = t.drugstore_department_id
+
+------------------------------
+
+declare @price_num_min int;
+
+-- ставлю аптеку с ценами на 2/6/7/8 место
+if @path like '/catalog/_/%.aspx'
+begin
+
+set @price_num_min = (select min(num) from @t_inet_search_dd where price_min > 1)
+
+if not isnull(@price_num_min, 1) in (1, 2)
+begin
+  update @t_inet_search_dd set num = 0     where num =  @price_num_min
+  update @t_inet_search_dd set num = num+1 where num >= 2
+  update @t_inet_search_dd set num = 2     where num =  0
+end
+
+
+set @price_num_min = (select min(num) from @t_inet_search_dd where price_min > 1and num >= 9)
+
+if not isnull(@price_num_min, 0) = 9
+begin
+  update @t_inet_search_dd set num = 0     where num =  @price_num_min
+  update @t_inet_search_dd set num = num+1 where num >= 9
+  update @t_inet_search_dd set num = 9     where num =  0
+end
+
+
+set @price_num_min = (select min(num) from @t_inet_search_dd where price_min > 1 and num >= 10)
+
+if not isnull(@price_num_min, 0) = 10
+begin
+  update @t_inet_search_dd set num = 0     where num =  @price_num_min
+  update @t_inet_search_dd set num = num+1 where num >= 10
+  update @t_inet_search_dd set num = 10     where num =  0
+end
+
+end
+
+---------------------------------------------------------------
+-- получаю описания организаций и остальные нужные строковые значения
+set @t19 = cast((cast(getdate() as float) - cast(@t as float))*1000.0*60.0*60.0*24.0 as int); set @t = getdate(); 
+
+
+update @t_inet_search_dd set
+  [@t_inet_search_dd].dd_inet_name    = t.dd_inet_name,
+  [@t_inet_search_dd].dd_inet_note    = t.dd_inet_note,
+  [@t_inet_search_dd].area_FullName   = t.area_FullName,
+  [@t_inet_search_dd].district_iname  = t.district_iname,
+  [@t_inet_search_dd].firm_logo_image = t.firm_logo_image,
+  [@t_inet_search_dd].firm_latin      = t.firm_latin
+from
+(
+select
+  dd_.drugstore_department_id,
+
+  replace(case when dd.dd_inet_name = '' then dd.drugstore_department_name else dd.dd_inet_name end, '"', '&quot;') as dd_inet_name,
+  replace(
+  case when cast(dd.dd_inet_note as varchar(max)) = '' 
+    then ch_site_code.dbo.f_inet_text_add_area(f.firm_inet_note, @area_id, a.area_name, a.area_FullName, a.area_FullName2, a.area_FullName3)
+    else cast(dd.dd_inet_note as varchar(max)) 
+  end
+  , '<br>', '<br/>') as dd_inet_note,
+
+  a.area_FullName,
+  c.district_iname,
+  f.firm_logo_image,
+  f.firm_latin
+from
+  @t_inet_search_dd dd_
+    inner join ch_site..drugstore_department           dd   with (nolock) on dd.drugstore_department_id   = dd_.drugstore_department_id
+    inner join ch_site..firm                           f    with (nolock) on f.firm_id                    = dd.firm_id
+    inner join ch_site..complex                        c    with (nolock) on c.complex_id                 = dd.complex_id
+    inner join ch_site..area                           a    with (nolock) on a.area_id                    = c.area_id
+) t
+where
+  [@t_inet_search_dd].drugstore_department_id = t.drugstore_department_id
+
+---------------------------------------------------
+-- делаю замену в названии аптеки и описаниях если там встречается корни других городов
+-- только для поисковиков
+set @t20 = cast((cast(getdate() as float) - cast(@t as float))*1000.0*60.0*60.0*24.0 as int); set @t = getdate(); 
+
+if @brouser_str like '%bot%'
+begin
+
+declare @area_RootName varchar(250);
+
+declare @t_inet_search_dd2_AreaRoot table(
+  area_RootName1 varchar(250), 
+  area_RootName2 varchar(250)  
+);
+
+insert into @t_inet_search_dd2_AreaRoot
+select 
+  a2.area_RootName1, 
+  a2.area_RootName2
+from 
+  @t_inet_search_dd dd_
+    left join ch_site..drugstore_department dd with(nolock) on dd_.drugstore_department_id = dd.drugstore_department_id
+    left join ch_site..complex c  with(nolock) on c.complex_id      =  dd.complex_id
+    left join ch_site..area    a1 with(nolock) on a1.area_id        =  c.area_id
+    left join ch_site..area    a2 with(nolock) on a2.area_id        <> c.area_id and
+                                                 a1.area_RootName1 <> a2.area_RootName1
+where
+  ' ' + dd_.dd_inet_name   like ' ' + a2.area_RootName1 + '%' and a2.area_RootName1 <> ''
+or
+  ' ' + cast(dd_.dd_inet_note as varchar(max)) like ' ' + a2.area_RootName1 + '%' and a2.area_RootName1 <> ''
+or
+  ' ' + dd_.dd_inet_name   like ' ' + a2.area_RootName2 + '%' and a2.area_RootName2 <> ''
+or
+  ' ' + cast(dd_.dd_inet_note as varchar(max))   like ' ' + a2.area_RootName2 + '%' and a2.area_RootName2 <> ''
+
+
+declare cursor1 cursor for select area_RootName1 from @t_inet_search_dd2_AreaRoot where area_RootName1 <> ''
+open cursor1
+fetch next from cursor1 into @area_RootName
+while (@@FETCH_STATUS <> -1)
+begin
+  
+  update @t_inet_search_dd set 
+    dd_inet_name   = replace(dd_inet_name,   @area_RootName, '...'),
+    dd_inet_note   = replace(dd_inet_note,   @area_RootName, '...')
+
+  fetch next from cursor1 into @area_RootName
+
+end
+close cursor1
+deallocate cursor1
+
+
+
+declare cursor1 cursor for select area_RootName2 from @t_inet_search_dd2_AreaRoot where area_RootName2 <> ''
+open cursor1
+fetch next from cursor1 into @area_RootName
+while (@@FETCH_STATUS <> -1)
+begin
+  
+  update @t_inet_search_dd set 
+    dd_inet_name   = replace(dd_inet_name,   @area_RootName, '...'),
+    dd_inet_note   = replace(dd_inet_note,   @area_RootName, '...')
+
+  fetch next from cursor1 into @area_RootName
+
+end
+close cursor1
+deallocate cursor1
+
+
+end
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- выдаю окончательный результат
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- заголовок организации
+set @t21 = cast((cast(getdate() as float) - cast(@t as float))*1000.0*60.0*60.0*24.0 as int); set @t = getdate(); 
+
+declare @t_inet_search_result table(
+  sort int,
+  sort2 int,
+  num int,
+  drugstore_department_id int,
+  medical_product_iname varchar(250),
+  href varchar(max),
+  load_hs_price_min money
+);
+
+insert into @t_inet_search_result
+select
+  1 as sort,
+  0 as sort2,
+  dd_.num,
+  dd_.drugstore_department_id,
+  '' as medical_product_iname,
+
+  -- блок организации
+  '<!-- ОРГАНИЗАЦИЯ - начало -->' +
+  '<table class="table_invisible" style="width:100%; border-radius:4px; border:1px solid silver; margin: 4px auto 15px auto;"><tr><td class="table_invisible">' + char(13) +
+  
+  -- БЛОК названия организации
+  --cast(dd_.inet_key as varchar) +
+  '<div style="padding:4px 8px 4px 8px; background: #EEEEEE; border-radius:4px 4px 0px 0px; border-bottom:1px dotted silver;">' + char(13) +
+  '<b><span style="font-size:115%">' + 
+  case when dd.area_id <> @area_id and dd.drugstore_code = 1 then 'Интернет-аптека: ' else '' end + 
+  case when @brouser_str like '%bot%' then replace(replace(dd_.dd_inet_name, '<noindex>', '<!-- ') , '</noindex>', ' -->') else dd_.dd_inet_name end + -- чтобы не было ключевиков в название организации
+  '</span></b>' + char(13) +
+  '<div style="padding:2px 0px 0px 1px;">' + dd_.area_fullname + char(13) +
+  case when @supplier = 1 or dd_.district_iname = '' then '' else ' - ' + dd_.district_iname end + '' + char(13) +
+  case when @dd_id <> 0                                         then '<br/>Адрес: ' + dd.drugstore_department_adress else '' end + '' + char(13) +
+  case when @dd_id <> 0                                         then '<br/>Телефон: ' + dd.drugstore_department_tel else '' end + '' + char(13) +
+  case when @dd_id <> 0  and (dd.firm_href + dd.firm_href2) <> '' then '<br/>Сайт: <a class="a_black" href="http://' + dd.firm_href + '">' + dd.firm_href + '</a>' + case when dd.firm_href2 <> '' then '; <a class="a_black" href="http://' + dd.firm_href2 + '">' + dd.firm_href2 + '</a>' else '' end else '' end + '' + char(13) +
+  case when (dd_.inet_flag2 = 1) then case when dd.drugstore_id = 102 then '<br/>' else '<br/><b><span style="color:green;">Доставка по России</span></b>' end else '' end + char(13) +
+  case when (dd_.inet_flag1 = 1) then case when dd.drugstore_id = 102 then '<br/>' else '<br/><b><span style="color:green;">Доставка по городу</span></b>' end else '' end + char(13) +
+  case when (dd.dd_ShowPrice = cast(1 as bit) or @ig_ShowPrice = cast(1 as bit)) and isnull(dd_.price_min, 1) > 1 then '<br/><b><span style="color:green;">Цена на "' + (@medical_product_name_name) + '" - от ' + cast(dd_.price_min as varchar) + '&nbsp;руб.</span></b>' else '' end +
+  '</div></div>' + char(13) + 
+
+
+  -- БЛОК описания организации
+  '<div style="padding:2px 6px 2px 6px;">' + char(13) +  
+
+  
+  '<table class="table_invisible" style="width:100%"><tr><td class="table_invisible">' + char(13) +
+  --картинка организации, если она есть и если аптека стоит не на 1 (не бесплатно) и если есть описание
+  case when dd_.firm_logo_image <> '' and dd_.inet_key >= 0.9  
+    then '<div style="width:' + cast(ch_site_code_old.dbo.f_inet_small_width() + 4 as varchar) + 'px; margin: 4px 8px 4px 0px; border-radius:4px; border:1px solid silver;"><img style="border-radius:3px; margin: 2px 2px 0px 2px;" height="' + cast(ch_site_code_old.dbo.f_inet_small_width() as varchar) + '" width="' + cast(ch_site_code_old.dbo.f_inet_small_width() as varchar) + '" alt="" src="' + ch_site_code.dbo.f_inet_ftp() + '/firm_logo/_small/' + dd_.firm_logo_image + '"></img></div>' + 
+         '</td><td class="table_invisible">'
+    else '' end + char(13) +
+  '<div style="padding:4px 0px 4px 0px;">' + 
+
+
+  '<table class="table_invisible" style="float:right; margin:0px 0px 0px 5px;"><tr><td class="table_invisible">' + 
+
+  case when cast(dd.firm_inet_action as varchar) <> '' or cast(dd.firm_inet_action2 as varchar) <> '' 
+    then '<a href="' + case when @mini_site_flag = 1 then '/action.aspx' else '/firm/' + dd.firm_latin + '/action.aspx' end + '"><img style="height:80px; width:80px;" alt="" src="http://ftp.003ms.ru/images/_small/action.png"></img></a>' 
+    else '' 
+  end +
+
+  '</td></tr><tr><td class="table_invisible">' +
+  case when dd.dd_24hour_flag = 1
+    then '<img style="height:80px; width:80px;" alt="" src="http://ftp.003ms.ru/images/_small/24hours.png"></img>' 
+    else ''
+  end +
+
+  '</td></tr></table>' + 
+
+  case when @brouser_str like '%bot%' then replace(replace(dd_.dd_inet_note, '<noindex>', '<!-- ') , '</noindex>', ' -->') else dd_.dd_inet_note end + char(13) + -- чтобы не было ключевиков в названии организации
+  --конец блока описания организации
+  '</div></td></tr></table>' + 
+
+
+  '</div>' + char(13) +
+  
+  -- БЛОК описания товаров
+  '<div style="padding:0px 0px 0px 0px;">' + char(13) +  
+  '<table class="table_invisible" style="width:100%"><tr><td class="table_invisible">' + char(13)
+  
+  as href,
+  0 as load_hs_price_min
+
+from
+  @t_inet_search_dd dd_
+    left join ch_site..drugstore_department dd with(nolock) on dd.drugstore_department_id = dd_.drugstore_department_id
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- НАЧАЛО БЛОКА ОПИСАНИЯ ТОВАРОВ
+set @t22 = cast((cast(getdate() as float) - cast(@t as float))*1000.0*60.0*60.0*24.0 as int); set @t = getdate(); 
+
+insert into @t_inet_search_result
+select
+  2 as sort,
+  0 as sort2,
+  dd_.num,
+  dd_.drugstore_department_id,
+  ds_mp_.medical_product_name_iname + ' : ' + ds_mp_.medical_product_iname + ' : ' + cast(ds_mp_.ds_medical_product_id as varchar) as medical_product_iname,
+  
+
+  '<!-- ТОВАР - начало -->' +
+  '<div style="padding:4px 8px 4px 8px; border-top:1px dotted silver;">' + char(13) +
+
+  -- сделано чтобы подгруппа не склеивалась с основными торговыми наименованиями
+  case when @international_group2_id <> 0
+    then '<noindex>'
+    else '' end +
+
+  case when @dd_id = 0 then 
+
+  '<a class="a_blue" ' +
+  'href="' +
+  case when @mini_site_flag = 1 
+    then '/search_text.aspx' +
+         '?mpn_id=' + cast(@medical_product_name_id as varchar) + 
+         '&amp;mp_id=' + cast(ds_mp_.medical_product_id as varchar) + 
+         '&amp;dd_id=' + cast(ds_mp_.drugstore_department_id as varchar) + 
+         '&amp;dsmp_id=' + cast(ds_mp_.ds_medical_product_id as varchar)
+
+    else 
+
+      case when ds_mp_.ig_goods_flag = 1 and ds_mp_.presence_val =  2 then '/catalog/alert.aspx?text=Необходимо уточнить наличие по телефону&http='
+           when ds_mp_.ig_goods_flag = 1 and ds_mp_.presence_val =  1 then '/catalog/alert.aspx?text=информация о наличии отсутствует, возможен заказ у поставщика&http='
+           when ds_mp_.ig_goods_flag = 1 and ds_mp_.presence_val = -1 then '/catalog/alert.aspx?text=Необходимо уточнить наличие по телефону (данные от ' + convert(varchar(10), ds_mp_.ds_mp_presence_tsdate, 104) + ')&http='
+           when ds_mp_.ig_goods_flag = 1 and ds_mp_.presence_val = -2 then '/catalog/alert.aspx?text=Информация о наличии отсутствует, возможен заказ у поставщика ' +'(данные по наличию у поставщика от ' + convert(varchar(10), ds_mp_.ds_mp_presence_tsdate, 104) + ')&http='
+           else '' end + 
+
+      case when ds_mp_.ig_goods_flag = 1 and ds_mp_.presence_val in (2,1,-1,-2) then 
+        replace(
+        'http://' + dd.area_InetName + '.' + dd.inet_domen_name + '/firm/' + dd.firm_latin + '/search_text.aspx' +
+        '?mpn_id=' + cast(@medical_product_name_id as varchar) + 
+        '&amp;mp_id=' + cast(ds_mp_.medical_product_id as varchar) + 
+        '&amp;dd_id=' + cast(ds_mp_.drugstore_department_id as varchar) + 
+        '&amp;dsmp_id=' + cast(ds_mp_.ds_medical_product_id as varchar) 
+        , '&', '|')
+      else
+       'http://' + dd.area_InetName + '.' + dd.inet_domen_name + '/firm/' + dd.firm_latin + '/search_text.aspx' +
+       '?mpn_id=' + cast(@medical_product_name_id as varchar) + 
+       '&amp;mp_id=' + cast(ds_mp_.medical_product_id as varchar) + 
+       '&amp;dd_id=' + cast(ds_mp_.drugstore_department_id as varchar) + 
+       '&amp;dsmp_id=' + cast(ds_mp_.ds_medical_product_id as varchar)
+      end
+
+    end +
+
+  '">'
+  +    
+  case when @dd_id = 0 and (dd_.inet_flag1 = 1 or dd_.inet_flag2 = 1) and dd.drugstore_id <> 102 then '<b>Купить</b> - ' else '' end
+  +
+  ds_mp_.medical_product_name_iname 
+  + 
+  case when ltrim(ds_mp_.medical_product_iname) = '' then '' else ' ' end + ds_mp_.medical_product_iname + char(13) 
+  +
+  '</a>'
+  
+  else
+
+  '<b>' + ds_mp_.medical_product_name_iname + case when ltrim(ds_mp_.medical_product_iname) = '' then '' else ' : ' end + ds_mp_.medical_product_iname + '</b>' + char(13) 
+
+  end +  
+
+  -- сделано чтобы подгруппа не склеивалась с осноными торговыми наименованиями
+  case when @international_group2_id <> 0
+    then '</noindex>'
+    else '' end +
+
+  +  
+  case when isnull(ds_mp_.ds_medical_product_price, 0) = 0  then '' else 
+    case when (dd.dd_ShowPrice = cast(1 as bit) or @ig_ShowPrice = cast(1 as bit)) then '<div style="color:#333; padding:0px 0px; font-size:12px;"><b>цена</b> : '        + cast(ds_mp_.ds_medical_product_price as varchar) + '&nbsp;руб. </div>' else '' end
+  end + char(13) +
+  case when len(isnull(ds_mp_.doctor_hours,           '')) <= 5 then '' else '<div style="color:#333; padding:0px 0px; font-size:12px;"><b>часы работы</b> : ' + ds_mp_.doctor_hours           + '</div>' end + char(13) +
+  case when len(isnull(ds_mp_.doctor_fio,             '')) <= 5 then '' else '<div style="color:#333; padding:0px 0px; font-size:12px;"><b>врач</b> : '        + ds_mp_.doctor_fio             + '</div>' end + char(13) +
+  case when len(isnull(ds_mp_.ds_medical_product_str, '')) <= 5 then '' else '<div style="color:#333; padding:0px 0px; font-size:12px;"><b>примечание</b> : '  + ds_mp_.ds_medical_product_str + '</div>' end + char(13) 
+
+  +
+
+  --cast(ds_mp_.presence_val as varchar) +
+  case when ds_mp_.ig_goods_flag = 1 and ds_mp_.presence_val = 2      then '<div style="color:#333; padding:0px 0px; font-size:12px;"><b>наличие</b> : уточните наличие по телефону</div>'
+       when ds_mp_.ig_goods_flag = 1 and ds_mp_.presence_val = 1      then '<div style="color:#333; padding:0px 0px; font-size:12px;"><b>наличие</b> : информация о наличии отсутствует, возможен заказ у поставщика ' + '</div>'
+       when ds_mp_.ig_goods_flag = 1 and ds_mp_.presence_val = -1     then '<div style="color:#333; padding:0px 0px; font-size:12px;"><b>наличие</b> : в наличии нет, возможность заказать уточните по телефону (было в наличии от ' + convert(varchar(10), ds_mp_.ds_mp_presence_tsdate, 104) + ')</div>'
+       when ds_mp_.ig_goods_flag = 1 and ds_mp_.presence_val = -2     then '<div style="color:#333; padding:0px 0px; font-size:12px;"><b>наличие</b> : информация о наличии отсутствует, возможен заказ у поставщика ' +'(данные от ' + convert(varchar(10), ds_mp_.ds_mp_presence_tsdate, 104) + ')</div>'
+       when ds_mp_.ig_goods_flag = 1 and ds_mp_.presence_val in (3,4) then ''
+  else '' end
+  +
+
+  '<table class="table_invisible" style="color:#707070; padding:0px 2px; font-size:11px;"><tr><td class="table_invisible"></td></tr>'
+
+
+  as href,
+  ds_mp_.ds_medical_product_price as load_hs_price_min
+  
+from
+  @t_inet_search_dd dd_
+    inner join ch_site..drugstore_department dd     with(nolock) on dd.drugstore_department_id  = dd_.drugstore_department_id
+    inner join @t_site_mpn_dd_mp         ds_mp_              on dd_.drugstore_department_id = ds_mp_.drugstore_department_id
+    
+--where
+--  1=2
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+--ПЕРЕЧЕНЬ ТОВАРОВ ИЗ ТАБЛИЦЫ ЗАГРУЗКИ 
+set @t23 = cast((cast(getdate() as float) - cast(@t as float))*1000.0*60.0*60.0*24.0 as int); set @t = getdate();
+
+declare @t_site_lhs table
+(
+  area_id int,
+  medical_product_name_id int,
+  drugstore_department_id int,
+  medical_product_id int,
+  medical_product_name_name varchar(250),
+  medical_product_name varchar(250),
+  ds_medical_product_id int,
+  load_hs_price_min money,
+  lhs_name varchar(1000),
+  mp_presence_val int,
+  dd_ShowPrice bit,
+  load_hs_inet_href varchar(1000),
+  load_hs_inet_imagepath varchar(1000),
+  load_hs_quan int
+);
+
+
+insert into @t_site_lhs
+select
+  @area_id,
+  medical_product_name_id,
+  drugstore_department_id,
+  medical_product_id,
+  medical_product_name_name,
+  medical_product_name,
+  ds_medical_product_id,
+  load_hs_price_min,
+  lhs_name,
+  mp_presence_val,
+  dd_ShowPrice,
+  load_hs_inet_href,
+  load_hs_inet_imagepath,
+  load_hs_quan
+from
+  ch_site..site_lhs with(nolock,index=ix_id)
+where
+  mpn_dd_id in (select mpn_dd_id from @t_mpn_dd)
+and
+  (@medical_product_id = 0 or medical_product_id = @medical_product_id)
+
+
+
+set @t24 = cast((cast(getdate() as float) - cast(@t as float))*1000.0*60.0*60.0*24.0 as int); set @t = getdate();
+
+insert into @t_inet_search_result
+select
+  2 as sort,
+  1 as sort2,
+  dd_.num,
+  dd_.drugstore_department_id,
+  lhs.medical_product_name_name + ' : ' + lhs.medical_product_name + ' : ' + cast(lhs.ds_medical_product_id as varchar) as medical_product_iname,
+
+  char(13) + '<!-- LHS -->' +
+  '<tr>' +
+  
+  case when @dd_id <> 0 then
+  '<td class="table_invisible" style="padding-left:3px;">' + 
+  case when lhs.load_hs_inet_href <> '' then '<a class="a_blue" href="' + lhs.load_hs_inet_href + '">' + case when lhs.load_hs_quan > 0 then 'Купить' else 'Заказать' end + '</a>' else '' end +
+  '</td>' 
+  else
+  '<td class="table_invisible" style="padding-left:3px;">' + 
+  case when lhs.load_hs_quan > 0 then 'на&nbsp;складе:' else 'под&nbsp;заказ:' end +
+  '</td>' 
+  end
+
+  + 
+
+  case when lhs.dd_ShowPrice = cast(1 as bit) and lhs.load_hs_price_min > 1 and not(lhs.load_hs_price_min is null) then 
+  '<td class="table_invisible" style="text-align:right; padding-left:10px;" > ' + 
+  '<!--' + lhs.lhs_name + '-->' + -- это для корректной сортировки данных
+  cast(lhs.load_hs_price_min as varchar) + '&nbsp;руб.&nbsp;-&nbsp;' +
+  '</td>' 
+  else '<td class="table_invisible" ></td>' end 
+  +
+
+
+  '<td class="table_invisible" style="padding-left:3px;">' + 
+  lhs.lhs_name + 
+  '</td>'
+  + 
+
+  '</tr>'
+  as href,
+
+  case when lhs.dd_ShowPrice = cast(1 as bit) and lhs.load_hs_price_min > 1 and not(lhs.load_hs_price_min is null) 
+    then lhs.load_hs_price_min
+    else 0 end as load_hs_price_min
+
+from
+  @t_site_lhs lhs
+    inner join @t_site_mpn_dd_mp ds_mp on ds_mp.medical_product_id      = lhs.medical_product_id and
+                                          ds_mp.drugstore_department_id = lhs.drugstore_department_id
+    inner join @t_inet_search_dd dd_   on dd_.drugstore_department_id   = lhs.drugstore_department_id
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+--КОНЕЦ ОПИСАНИЯ ТОВАРОВ
+set @t25 = cast((cast(getdate() as float) - cast(@t as float))*1000.0*60.0*60.0*24.0 as int); set @t = getdate();
+
+insert into @t_inet_search_result
+select
+  2 as sort,
+  2 as sort2,
+  dd_.num,
+  dd_.drugstore_department_id,
+  ds_mp_.medical_product_name_iname + ' : ' + ds_mp_.medical_product_iname + ' : ' + cast(ds_mp_.ds_medical_product_id as varchar) as medical_product_iname,
+  
+  char(13) + '<!-- ТОВАР - конец -->' +
+  '</table>' +
+
+case when @ds_medical_product_id <> ds_mp_.ds_medical_product_id or @ds_medical_product_id = 0 then
+
+  case when (ds_mp_.inet_flag1 = 1 or ds_mp_.inet_flag2 = 1 or ds_mp_.inet_ImageLevel = 1) and ds_mp_.inet_description3 <> '' and ds_mp_.inet_ImagePath <> '' then 
+    '<table class="table_invisible"><tr><td class="table_invisible">' + char(13) +
+    '<img style="border:1px solid silver; margin: 8px 8px 2px 0px;" height="' + cast(ch_site_code_old.dbo.f_inet_tiny_width() as varchar) + '" width="' + cast(ch_site_code_old.dbo.f_inet_tiny_width() as varchar) + '" src="' + ch_site_code.dbo.f_inet_ftp() + '/images-goods/_tiny/' + 
+    ds_mp_.inet_ImagePath + '" alt=""></img>' + 
+    '</td><td class="table_invisible">' + char(13) + 
+    '<div style="margin: 8px 0px 2px 0px;">' + ds_mp_.inet_description3 + '</div>' +
+    '</td></tr></table>' + char(13)
+  else '' end
+
+else
+
+  '<table class="table_invisible" style="margin:10px 0px 5px 0px;"><tr><td class="table_invisible" style="padding-right:10px">' 
+  +
+  case when ds_mp_.inet_ImagePath = '' then '' else
+    '<div style="float:left; margin: 0px 8px 8px 0px; width:' + cast(ch_site_code_old.dbo.f_inet_large_width() + 4 as varchar) + 'px; border-radius:4px; border:1px solid silver;">' + 
+    '<img style="border-radius:3px; margin: 2px 2px 0px 2px;" height="' + cast(ch_site_code_old.dbo.f_inet_large_width() as varchar) + '" width="' + cast(ch_site_code_old.dbo.f_inet_large_width() as varchar) + '" alt="" src="' + ch_site_code.dbo.f_inet_ftp() + '/images-goods/_large/' + ds_mp_.inet_ImagePath + '"></img>' +
+    '</div>'
+  end 
+  +
+  case when ds_mp_.inet_href = '' then '' else '<b><a class="a_blue" href="http://' + replace(ds_mp_.inet_href, 'http://', '') + '">' + case when ds_mp_.ig_goods_flag = cast(1 as bit) then 'ЗАКАЗАТЬ' else 'посмотреть подробно' end + '</a></b><br/>' end 
+  +
+  ds_mp_.inet_description4 
+  +
+  '</td></tr></table>'
+
+end
+
++
+
+  '</div>'
+  as href,
+  0 as load_hs_price_min
+
+from
+  @t_inet_search_dd dd_
+    inner join ch_site..drugstore_department dd     with(nolock) on dd.drugstore_department_id  = dd_.drugstore_department_id
+    inner join @t_site_mpn_dd_mp         ds_mp_              on dd_.drugstore_department_id = ds_mp_.drugstore_department_id
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- конец блока фирмы
+set @t26 = cast((cast(getdate() as float) - cast(@t as float))*1000.0*60.0*60.0*24.0 as int); set @t = getdate();
+
+insert into @t_inet_search_result
+select
+  5 as sort,
+  0 as sort2,
+  dd_.num,
+  dd_.drugstore_department_id,
+  '' as medical_product_iname,
+
+
+  char(13) + '<!-- ОРГАНИЗАЦИЯ - конец -->' + 
+  
+  char(13) + '</td></tr></table></div>' + 
+  
+
+  char(13) + case when @dd_id = 0 /*or @medical_product_id = 0*/ then 
+    ''
+  else
+
+    '<div style="padding:5px 8px 5px 8px; text-align:center;">' + char(13) +
+    '
+    <script src="http://api-maps.yandex.ru/1.1/index.xml?key=' + (select yandex_map_key from ch_site..inet_domen where inet_domen_id = @inet_domen_id) + '&modules=pmap&wizard=constructor"
+      type="text/javascript"></script>
+    <script type="text/javascript">
+      window.onload = function () {
+        var map = new YMaps.Map(document.getElementById("YMapsID"));
+        map.setCenter(new YMaps.GeoPoint(' + replace(cast(dd.dd_longitude as varchar), ',', '.') + ', ' + replace(cast(dd.dd_latitude as varchar), ',', '.') + '), ' + cast(dd.dd_scale as varchar) + ', YMaps.MapType.' + dd.area_MapType + ');
+        map.addControl(new YMaps.Zoom());
+        YMaps.MapType.PMAP.getName = function () { return "Народная"; };
+        map.addControl(new YMaps.TypeControl([
+            YMaps.MapType.MAP,
+            YMaps.MapType.SATELLITE,
+            YMaps.MapType.PMAP
+        ], [0, 1, 2]));
+
+        var placemark = new YMaps.Placemark(new YMaps.GeoPoint(' + replace(cast(dd.dd_longitude as varchar), ',', '.') + ',' + replace(cast(dd.dd_latitude as varchar), ',', '.') + '), {style: "default#hospitalIcon"});
+        placemark.name = "";
+        placemark.description = "";
+        map.addOverlay(placemark);
+
+      }
+    </script>
+    <div id="YMapsID" style="width:100%;height:500px;"></div>
+    ' +
+    '</div>' + char(13)
+  end
+  
++
+
+  --case when dd_.num in (1) then '</div>' else '' end + char(13) +
+  
+  -- конец блока фирмы
+  char(13) + '</td></tr></table>' + 
+
+  case 
+    when dd_.num in (2) and     @price_num_min is null then @advert_text2 
+    when dd_.num in (3) and not @price_num_min is null then @advert_text2 
+    else '' 
+  end
+
+
+  as href,
+  0 as load_hs_price_min
+
+from
+  @t_inet_search_dd dd_
+    inner join ch_site..drugstore_department dd  with(nolock) on dd.drugstore_department_id = dd_.drugstore_department_id
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- кнопка "показать все фирмы"
+set @t27 = cast((cast(getdate() as float) - cast(@t as float))*1000.0*60.0*60.0*24.0 as int); set @t = getdate();
+
+insert into @t_inet_search_result
+select
+  6 as sort,
+  0 as sort2,
+  99999 as num,
+  0 as drugstore_department_id,
+  '' as medical_product_iname,
+  --показываю кнопку "Показать все фирмы"
+
+  '<!-- ПОКАЗАТЬ ВСЕ -->' + 
+  '<div style="text-align: center"><span class="button1"><a href="/catalog/search_text.aspx?mpn_id=' + cast(@medical_product_name_id as varchar) +'">'+ 
+  'Показать все предложения</a>' +
+  '</span></div>'
+  as href,
+  0 as load_hs_price_min
+
+where 
+  @path <> '/catalog/search_text.aspx'
+and
+  @path <> '/search_text.aspx' 
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- все объединяем
+set @t28 = cast((cast(getdate() as float) - cast(@t as float))*1000.0*60.0*60.0*24.0 as int); set @t = getdate();
+
+
+---------------------------------------------------------------
+-- если препарат отсутствует в наличии или есть только под заказ
+
+set @t29 = cast((cast(getdate() as float) - cast(@t as float))*1000.0*60.0*60.0*24.0 as int); set @t = getdate(); 
+
+
+declare @a_id int;
+declare @mpn_id int;
+declare @str_area1 varchar(8000);
+declare @str_area2 varchar(8000);
+declare @str_sinonim varchar(8000);
+
+set @str_area2 = '';
+set @str_sinonim = '';
+
+
+if 
+  ((select max(presence_val) from @t_site_mpn_dd_mp) <= 1 or (select count(*) from @t_site_mpn_dd_mp) = 0) 
+and 
+  @firm_id = 0
+and
+  @dd_id = 0
+--and
+--  not @brouser_str like '%bot%'
+
+begin
+
+-- ищу в каких ближайших городах есть данные препарат
+declare @t_inet_search3_ table(
+  medical_product_name_id int,
+  area_id int
+);
+
+insert into @t_inet_search3_
+select 
+  medical_product_name_id,
+  area_id
+from
+  ch_site..site_a_mpn ds_mp with (nolock, index=ix_a_mpn)
+where
+  ds_mp.medical_product_name_id = @medical_product_name_id 
+--and
+--  (@medical_product_id = 0 or ds_mp.medical_product_id = @medical_product_id)
+--group by
+--  medical_product_name_id,
+--  area_id
+
+
+set @t30 = cast((cast(getdate() as float) - cast(@t as float))*1000.0*60.0*60.0*24.0 as int); set @t = getdate(); 
+
+declare @t_inet_search3 table(
+  area_id int,
+  sort float,
+  static_page_name varchar(250)
+);
+
+insert into @t_inet_search3
+select 
+  a.area_id,
+  max(1.0*sqrt(square(a.area_latitude - a_.area_latitude) + square(a.area_longitude - a_.area_longitude))) as sort,
+  'http://' + a.area_inetname + '.' + inet_domen_name + '/catalog/' + medical_product_name_latin + '.aspx' as static_page_name
+from
+  @t_inet_search3_ ds_mp
+    inner join ch_site..f_medical_product_name mpn with(nolock) on mpn.medical_product_name_id = ds_mp.medical_product_name_id
+    inner join ch_site..area                   a   with(nolock) on a.area_id                   = ds_mp.area_id
+    inner join ch_site..inet_domen             ind with(nolock) on ind.inet_domen_id           = a.inet_domen_id
+    inner join ch_site..area                   a_  with(nolock) on a_.area_id                  = @area_id
+group by
+  a.area_id,
+  a.area_inetname,
+  medical_product_name_latin,
+  inet_domen_name
+
+set @t31 = cast((cast(getdate() as float) - cast(@t as float))*1000.0*60.0*60.0*24.0 as int); set @t = getdate(); 
+
+
+declare cursor3 cursor for select top 15 area_id from @t_inet_search3 order by sort asc --desc
+open cursor3
+
+  fetch next from cursor3 into @a_id
+    while (@@FETCH_STATUS <> -1)
+    begin
+      set @str_area2 = @str_area2 + 
+      case when @medical_product_id = 0 
+        then ' <!--noindex--><div><a class="a_gray" style="font-size:11px; color:blue;" onclick="a_TargetAll(this); return false" href="' + (select static_page_name from @t_inet_search3 where area_id = @a_id) + '">' + (select area_fullname from ch_site..area with(nolock) where area_id = @a_id) + '</a></div><!--/noindex-->' + char(13)
+        else ' <!--noindex--><div><a class="a_gray" style="font-size:11px; color:blue;" onclick="a_TargetAll(this); return false" href="http://' + (select area_InetName from ch_site..area with(nolock) where area_id = @a_id) + '.003ms.ru/catalog/search_text.aspx?mpn_id=' + cast(@medical_product_name_id as varchar) + '&amp;mp_id=' + + cast(@medical_product_id as varchar) + '">' + (select area_fullname from ch_site..area with(nolock) where area_id = @a_id) + '</a></div><!--/noindex-->' + char(13)
+      end
+      --set @str_area2 = @str_area2 + ', ';
+      fetch next from cursor3 into @a_id
+    end
+
+close cursor3
+deallocate cursor3 
+
+
+end
+
+--------------------------------------------------
+-- ищу в какие синонимы препарата есть в наличии
+
+
+set @t32 = cast((cast(getdate() as float) - cast(@t as float))*1000.0*60.0*60.0*24.0 as int); set @t = getdate(); 
+
+
+if 
+  ((select max(presence_val) from @t_site_mpn_dd_mp) <= 1 or (select count(*) from @t_site_mpn_dd_mp) = 0) 
+and 
+  @firm_id = 0
+and
+  @dd_id = 0
+--and
+--  not @brouser_str like '%bot%'
+
+begin
+
+declare @t_inet_search4 table(
+  medical_product_name_id int,
+  href varchar(max),
+  presence_val int,
+  c int
+);
+
+insert into @t_inet_search4
+select
+  t.medical_product_name_id,
+  '<div><a class="a_gray" style="font-size:11px; color: blue;" onclick="a_TargetAll(this); return false" href="' + t.static_page_name  + '">' + t.medical_product_name_name + '</a>' + 
+  '</div>' + char(13) as href,
+  presence_val,
+  c
+from
+(
+select
+  mpn.medical_product_name_id,
+  case when mpn.medical_product_name_iname = '' then mpn.medical_product_name_name else mpn.medical_product_name_iname end as medical_product_name_name,
+  'http://' + a.area_inetname + '.' + ind.inet_domen_name + '/catalog/' + medical_product_name_latin + '.aspx' as static_page_name,
+  ds_mp.presence_val,
+  ds_mp.c
+from
+
+(
+select
+  ds_mp.medical_product_name_id,
+  max(mp_presence_val) as presence_val,
+  count(*) as c
+from
+  ch_site..site_a_mpn ds_mp with(nolock,index=ix_in_a)
+where
+  (ds_mp.international_name_id = @international_name_id and @international_name_id <> 0)
+and
+  (ds_mp.area_id = @area_id)
+and
+  ds_mp.medical_product_name_id <> @medical_product_name_id
+and
+  ds_mp.presence_real_val = 1
+group by
+  ds_mp.medical_product_name_id
+) ds_mp
+
+    inner join ch_site..f_medical_product_name mpn with (nolock) on mpn.medical_product_name_id = ds_mp.medical_product_name_id
+    inner join ch_site..area                   a   with (nolock) on a.area_id                   = @area_id
+    inner join ch_site..inet_domen             ind with (nolock) on ind.inet_domen_id           = a.inet_domen_id
+
+) t
+order by
+  t.presence_val desc,
+  t.c asc
+
+set @t33 = cast((cast(getdate() as float) - cast(@t as float))*1000.0*60.0*60.0*24.0 as int); set @t = getdate(); 
+
+
+declare cursor4 cursor for select medical_product_name_id from @t_inet_search4 order by presence_val desc, c asc
+open cursor4
+
+  fetch next from cursor4 into @mpn_id
+    while (@@FETCH_STATUS <> -1)
+    begin
+      set @str_sinonim = @str_sinonim + 
+      (select href from @t_inet_search4 where medical_product_name_id = @mpn_id)
+      fetch next from cursor4 into @mpn_id
+    end
+
+close cursor4
+deallocate cursor4
+
+end
+
+---------------------
+set @t34 = cast((cast(getdate() as float) - cast(@t as float))*1000.0*60.0*60.0*24.0 as int); set @t = getdate(); 
+
+
+declare @usl int;
+set @usl = case when ((select max(presence_real_val) from @t_inet_search_dd) = 0 or (select count(*) from @t_inet_search_dd) = 0) and @firm_id = 0 and @dd_id = 0
+                then 1
+                else 0 end;
+
+
+if @str_area2 <> ''
+begin
+  set @str_area2 = substring(@str_area2, 1, len(@str_area2)-1) + '';
+end
+
+if @str_sinonim <> ''
+begin
+  set @str_sinonim = substring(@str_sinonim, 1, len(@str_sinonim)-1) + '';
+end
+
+
+declare @t_inet_search_area_sinonim table(
+  href varchar(max)
+);
+
+insert into @t_inet_search_area_sinonim
+select
+  '<table id="dd_1" class="table_invisible" style="width:100%; border-radius:4px; border:1px solid silver; margin: 10px auto 6px auto;"><tr><td class="table_invisible" style="padding:0px 0px 3px 0px;">' +
+  '<div style="border-bottom:1px dotted silver; padding: 4px 8px; margin-bottom:2px; background: #EEEEEE;">' + char(13) +
+  '<b>Информация о наличии ' + 
+  ' "' + 
+  (@medical_product_name_name) + case when @medical_product_id = 0 then '' else ' ' +(select medical_product_iname from ch_site..f_medical_product with(nolock) where medical_product_id = @medical_product_id) end + 
+  '" в ' + 
+  (select max(area_fullname2) from ch_site..complex c with(nolock) inner join ch_site..area a on a.area_id = c.area_id where c.complex_id = @complex_id) + 
+  ' отсутствует</b>' + char(13) +
+  '</div>' + char(13) + 
+    
+  case when @str_sinonim <> '' and @medical_product_id = 0 then 
+    '<div style="padding: 3px 0px 0px 8px;">' + char(13) + 
+    'В аптеках имеются в наличии следующие <b>синонимы</b> данного лекарственного препарата: <a href="#" onclick="change_visibility(''div_sinonim''); return false;">посмотреть</a>' + char(13) +
+    '<div id="div_sinonim" style="display:none; font-size: 12px; padding:0px 0px 0px 4px;">' + char(13) +
+    @str_sinonim + char(13) +
+    '<span style="font-size:11px;">примечание: синоним это медицинский препарат, с таким же действующим веществом, по возможности применения обязательно консультируйтесь с врачом.</span><br/>' + char(13) +
+    '</div>' + char(13) +    
+    '</div>'
+  else '' end + 
+  
+  case when @str_area2 <> '' then 
+    '<div style="padding: 3px 0px 0px 8px;">' + char(13) + 
+    'Искомая позиция есть в наличии в следующих городах России: <a href="#" onclick="change_visibility(''div_area''); return false;">посмотреть</a>' + char(13) +
+    '<div id="div_area" style="display:none; padding:0px 0px 0px 8px;">' + char(13) +
+    @str_area2 + char(13) +
+    '</div>' + char(13) +
+    '</div>'
+  else '' end + 
+  
+  '</td></tr></table>'
+  as href
+from
+  ch_site..f_medical_product_name mpn with(nolock)
+where
+  mpn.medical_product_name_id = @medical_product_name_id
+and
+  @usl = 1
+
+
+----------------------------------------------------------------
+-- рассчитываю памятку
+set @t35 = cast((cast(getdate() as float) - cast(@t as float))*1000.0*60.0*60.0*24.0 as int); set @t = getdate(); 
+
+/*
+declare @t_pamiatka table(
+  href varchar(max)
+);
+
+insert into @t_pamiatka
+select
+  href
+from
+(
+select 
+  mpn_text2 as href 
+from 
+  c h_d_1.dbo.f_mpn_area_desc(@medical_product_name_id, @area_id, @complex_id, @complex2_id, @host)
+where
+  @firm_id = 0
+and
+  (@path like '/catalog/_/%.aspx' or @path = '/catalog/search_text.aspx')
+
+union all
+
+select 
+  replace(replace(replace(replace(replace(replace(
+  cast(iml.inet_menu_left_topheader3 as varchar(max)),
+  '%hide%'   , ''),
+  '%город%'  , a.area_FullName),
+  '%город2%' , a.area_FullName2),
+  '%город3%' , a.area_FullName3),
+  '%наименование%', mpn.medical_product_name_name),
+  '%наименование1%', mpn.medical_product_name_iname)
+  as href 
+from 
+  c h_d_1.dbo.f_inet_menu_left(@host, @host + @path) iml_
+    left join ch_site..inet_menu_left         iml with(nolock) on iml.inet_menu_left_id       = iml_.inet_menu_left_id
+    left join ch_site..inet_domen             ind with(nolock) on ind.inet_domen_name2        = @host or @host like '%.' + ind.inet_domen_name2
+    left join ch_site..f_medical_product_name mpn with(nolock) on mpn.medical_product_name_id = @medical_product_name_id
+    left join ch_site..area                   a   with(nolock) on a.area_id                   = @area_id
+
+where
+  @firm_id = 0
+and
+  not (@path like '/catalog/_/%.aspx' or @path = '/catalog/search_text.aspx')
+) t
+*/
+
+----------------------------------------------------------------
+-- показываю результат
+set @t36 = cast((cast(getdate() as float) - cast(@t as float))*1000.0*60.0*60.0*24.0 as int); set @t = getdate(); 
+
+
+if @new_query = 0
+
+begin
+
+-- CEO текстовка
+select top 1
+  @advert_text1 as href
+
+union all
+
+
+--панель фильра и кнопок
+select '<table class="table_invisible" style="width:100%; margin:6px 0px 0px -3px; text-align:left;"><tr><td class="table_invisible">' as href
+where 
+  (select count(*) from @t_inet_search_dd) > 0 or @medical_product_id <> 0
+and
+  @firm_id = 0
+and
+  @dd_id = 0
+
+union all
+
+select 
+  href
+from
+  @t_filter
+where
+  (select count(*) from @t_inet_search_dd) > 0 or @medical_product_id <> 0
+and
+  @firm_id = 0
+and
+  @dd_id = 0
+
+union all
+
+select
+  '</td></tr></table>' as href
+where
+  (select count(*) from @t_inet_search_dd) > 0 or @medical_product_id <> 0
+and
+  @firm_id = 0
+and
+  @dd_id = 0
+
+union all
+
+-- синонимы и города
+select
+  href
+from
+  @t_inet_search_area_sinonim
+where
+  (select complex_scode from ch_site..complex with(nolock) where complex_id = @complex_id) = 0
+
+
+union all
+
+
+-- результаты поиска
+
+select
+  href
+from
+(
+select top 99999
+  *
+from 
+  @t_inet_search_result
+where 
+  num <= @show_count
+or 
+  num = 99999
+or
+  @path = '/catalog/search_text.aspx'
+or
+  @path = '/search_text.aspx'
+order by
+  num asc,
+  sort asc,
+  medical_product_iname,
+  sort2 asc
+) t
+
+--union all
+
+--select '<div style="border-top:1px solid gray;margin-top:20px;">' + href + '</div>' as href from @t_pamiatka
+
+end
+
+set @t37 = cast((cast(getdate() as float) - cast(@t  as float))*1000.0*60.0*60.0*24.0 as int); set @t = getdate(); 
+
+B1:
+
+---------------------------------------------
+--фиксирую статистику
+set @t38 = cast((cast(getdate() as float) - cast(@t  as float))*1000.0*60.0*60.0*24.0 as int); set @t = getdate(); 
+
+
+if not(@brouser_str like '%bot%') --and (@path like '/catalog/_/%.aspx' or @path like '%/search_text.aspx' or @path like '%/search_analog.aspx')
+  
+begin
+  declare @c_id int;
+  set @c_id = case when @complex2_id = 0 then @complex_id else @complex2_id end;
+
+  exec add_stat_inet 
+    @area_id,
+    @url_referrer,
+    @brouser_str,
+    @session_id,
+    @stat_inet_ip,
+    @medical_product_name_id,
+    @medical_product_id,
+    @dd_id,
+    @complex_id,
+    @complex2_id,
+    @host,
+    @path,
+    @stat_inet_params,
+    @stat_inet_UrlReferrer
+
+end
+
+set @t39 = cast((cast(getdate() as float) - cast(@t  as float))*1000.0*60.0*60.0*24.0 as int); set @t = getdate(); 
+set @t00 = cast((cast(getdate() as float) - cast(@t_ as float))*1000.0*60.0*60.0*24.0 as int); 
+
+
+if (SELECT COUNT(*) FROM ch_temp_mem.dbo.sysobjects where xtype = 'U' and name = 'stat_inet_sql_sresult') = 0
+begin
+
+CREATE TABLE ch_temp_mem.dbo.stat_inet_sql_sresult(
+	[ts_date] [datetime] NULL,
+	[host] [varchar](250) NULL,
+	[path] [varchar](250) NULL,
+	[a_id] [int] NULL,
+	[mpn_id] [int] NULL,
+	[t01] [int] NULL,
+	[t02] [int] NULL,
+	[t03] [int] NULL,
+	[t04] [int] NULL,
+	[t05] [int] NULL,
+	[t06] [int] NULL,
+	[t07] [int] NULL,
+	[t08] [int] NULL,
+	[t09] [int] NULL,
+	[t10] [int] NULL,
+	[t11] [int] NULL,
+	[t12] [int] NULL,
+	[t13] [int] NULL,
+	[t14] [int] NULL,
+	[t15] [int] NULL,
+	[t16] [int] NULL,
+	[t17] [int] NULL,
+	[t18] [int] NULL,
+	[t19] [int] NULL,
+	[t20] [int] NULL,
+	[t21] [int] NULL,
+	[t22] [int] NULL,
+	[t23] [int] NULL,
+	[t24] [int] NULL,
+	[t25] [int] NULL,
+	[t26] [int] NULL,
+	[t27] [int] NULL,
+	[t28] [int] NULL,
+	[t29] [int] NULL,
+	[t30] [int] NULL,
+	[t31] [int] NULL,
+	[t32] [int] NULL,
+	[t33] [int] NULL,
+	[t34] [int] NULL,
+	[t35] [int] NULL,
+	[t36] [int] NULL,
+	[t37] [int] NULL,
+	[t38] [int] NULL,
+	[t39] [int] NULL,
+	[t00] [int] NULL
+) ON [PRIMARY]
+
+end
+
+insert into ch_temp_mem..stat_inet_sql_sresult
+(
+ts_date,
+host,
+path,
+a_id,
+mpn_id,
+t00,t01,t02,t03,t04,t05,t06,t07,t08,t09,
+t10,t11,t12,t13,t14,t15,t16,t17,t18,t19,
+t20,t21,t22,t23,t24,t25,t26,t27,t28,t29,
+t30,t31,t32,t33,t34,t35,t36,t37,t38,t39
+)
+values
+(
+getdate(),
+isnull(@host,''),
+isnull(@path,''),
+isnull(@a_id,0),
+isnull(@mpn_id,0),
+@t00,@t01,@t02,@t03,@t04,@t05,@t06,@t07,@t08,@t09,
+@t10,@t11,@t12,@t13,@t14,@t15,@t16,@t17,@t18,@t19,
+@t20,@t21,@t22,@t23,@t24,@t25,@t26,@t27,@t28,@t29,
+@t30,@t31,@t32,@t33,@t34,@t35,@t36,@t37,@t38,@t39
+)
+
+
+----------------------------------------------------
+
+declare @cur_date2 datetime;
+set @cur_date2 = getdate();
+
+exec dbo.add_sql_stat 'WUC_search_ds-SearchResult', @cur_date1, @cur_date2
+

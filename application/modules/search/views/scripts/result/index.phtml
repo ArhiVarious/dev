@@ -1,0 +1,54 @@
+<table class="result" style="width: 100%;">
+    <thead>
+        <tr>
+            <th>Препарат</th>
+            <th>Учреждение</th>
+            <th>Дата актуальности</th>
+        </tr>
+    </thead>
+    <tbody>
+        <? foreach ($this->data as $arData): ?>
+            <tr>
+                <td><?= $arData['medical_product_name_name'] ?> <?= $arData['medical_product_name'] ?></td>
+                <td>
+                    <?= $arData['dd_inet_name'] ?>
+                    <div class="contact" style="height: 29px;overflow: hidden;">
+                        <div class="buttons">
+                            <p class="button opener" data-close="1">Контакты</p><p class="button map">Карта</p>
+                        </div>
+                        <p><?= $arData['drugstore_department_note'] ?>
+                        <p>Адрес: <?= $arData['drugstore_department_adress'] ?>
+                        <p>Телефон: <?= $arData['drugstore_department_tel'] ?>
+                    </div>
+                </td>
+                <td><?= $arData['load_hs_date_max'] ?></td>
+            </tr>
+        <? endforeach ?>
+    </tbody>
+</table>
+<style>
+    table.result td {width: 33%;padding: 9px;vertical-align: top;}
+    table.result tr:nth-child(even) {background: #CCC}
+    table.result tr:nth-child(odd) {background: #FFF}
+    table.result div.contact p.button {width: 54px;display: block;padding: 4px;background-color: #54b4ff;cursor: pointer;float: left;margin-right: 10px;}
+    table.result div.contact p.button.map {width: 35px;}
+    table.result div.contact div.buttons {clear: both;width: 100%;height: 29px;}
+</style>
+<script>
+    $(function(){
+        $('table.result .contact p.opener').on('click',function(){
+            var $selector = $(this).parents('.contact');
+            if($(this).data('close'))
+            {
+                $selector.data('oHeight',$selector.height()).css('height','auto').data('nHeight',$selector.height()).height($selector.data('oHeight')).animate({height: $selector.data('nHeight')},400);
+                $(this).data('close',0)
+            }
+            else
+            {
+                $selector.animate({height: $selector.data('oHeight')},400);
+                $(this).data('close',1)
+            }
+            
+        })
+    })
+</script>

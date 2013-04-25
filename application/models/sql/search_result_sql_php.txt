@@ -1,0 +1,84 @@
+select 'stores' as sql_result_type
+select
+    1 as sort,
+    0 as sort2,
+    @medical_product_name_name as medical_product_iname,
+    @mini_site_flag as mini_site,
+    @ig_ShowPrice as ig_ShowPrice,
+    @area_id as p_area_id,
+    @dd_id as dd_id,
+    dd.*
+from
+  @t_inet_search_dd dd
+order by
+  num asc,
+  sort asc,
+  medical_product_iname,
+  sort2 asc
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- БЛОК ТОВАРОВ
+select 'tovars' as sql_result_type
+select
+    2 as sort,
+    0 as sort2,
+    dd_.num,
+    dd_.drugstore_department_id,
+    ds_mp_.medical_product_name_iname + ' : ' + ds_mp_.medical_product_iname as medical_product_iname,
+    ds_mp_.presence_val,
+    ds_mp_.medical_product_id,
+    ds_mp_.drugstore_department_id,
+    ds_mp_.ds_medical_product_id,
+    ds_mp_.ds_mp_presence_tsdate,
+    @mini_site_flag as mini_site,
+    @international_group2_id as international_group,
+    @medical_product_name_id as medical_product_name_id,
+    ds_mp_.ig_goods_flag,
+    dd.area_InetName,
+    dd.inet_domen_name,
+    dd.firm_latin,
+    ds_mp_.medical_product_name_iname, 
+    ds_mp_.ds_medical_product_price,
+    ds_mp_.doctor_hours,
+    ds_mp_.doctor_fio,
+    ds_mp_.ds_medical_product_str
+from
+  @t_inet_search_dd dd_
+    inner join ch_site..drugstore_department dd     with(nolock) on dd.drugstore_department_id  = dd_.drugstore_department_id
+    inner join @t_site_mpn_dd_mp             ds_mp_              on dd_.drugstore_department_id = ds_mp_.drugstore_department_id
+order by
+  num asc,
+  sort asc,
+  medical_product_iname,
+  sort2 asc
+
+
+-------------------------------------------------------
+--БЛОК ПОДСТРОК
+select 'pod_strs' as sql_result_type
+select
+    2 as sort,
+    1 as sort2,
+    dd_.num,
+    dd_.drugstore_department_id,
+    ds_mp_.ds_medical_product_id,
+    ds_mp_.medical_product_name_iname + ' : ' + ds_mp_.medical_product_iname + ' : ' + cast(ds_mp_.ds_medical_product_id as varchar) as medical_product_iname,
+    lhs_.load_hs_price_min,
+    dd.dd_ShowPrice,
+    lhs_.lhs_name,
+    ds_mp_.ds_medical_product_id
+from
+  @t_inet_search_dd dd_
+    left  join @t_site_mpn_dd_mp ds_mp_             on ds_mp_.drugstore_department_id = dd_.drugstore_department_id
+    left  join @t_site_lhs       lhs_               on lhs_.area_id                   = ds_mp_.area_id and
+                                                                                  lhs_.medical_product_name_id   = ds_mp_.medical_product_name_id and                                                                                                 
+                                                                                  lhs_.drugstore_department_id   = ds_mp_.drugstore_department_id and
+                                                                                  lhs_.medical_product_id        = ds_mp_.medical_product_id    
+    left  join ch_site..drugstore_department   dd     with(nolock,index=ix_dd) on dd.drugstore_department_id     = dd_.drugstore_department_id    
+where
+  ds_mp_.presence_val in (3,4)
+order by
+  num asc,
+  sort asc,
+  medical_product_iname,
+  sort2 asc

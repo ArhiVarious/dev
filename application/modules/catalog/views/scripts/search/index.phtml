@@ -1,0 +1,90 @@
+<div id="main_header">
+    <h1>
+        <?=$this->mp['medical_product_name_name']?> - где купить в <?=$this->domain_data['area_FullName2']?>, цена
+    </h1>
+</div>
+<div id="navBar2">
+    <ul>
+        <li><a class="active" href="/catalog/search_text.aspx?mpn_id=261">Наличие</a></li>
+        <li><a href="/catalog/search/price/mpn/<?=$this->mp['medical_product_name_id']?>">Цены</a></li>
+        <li><a href="/catalog/search/map/mpn/<?=$this->mp['medical_product_name_id']?>">Карта</a></li>
+        <li><a href="/catalog/search_buy.aspx?mpn_id=<?=$this->mp['medical_product_name_id']?>">Купить</a></li>
+        <li><a href="/catalog/search_analog.aspx?mpn_id=<?=$this->mp['medical_product_name_id']?>">Синонимы</a></li>
+        <li><a href="http://003ms.ru/doc2/<?=$this->mp['medical_product_name_latin']?>.aspx" target="_blank">Описание</a></li>
+        <li><a href="/catalog/search_supplier.aspx?iag_id=1&mpn_id=<?=$this->mp['medical_product_name_id']?>">Поставщики</a>
+    </li>
+    </ul>
+</div>
+<div class="yandex_direct in_search_result"><?=$this->yandex_direct?></div>
+<div id="div_context2">
+<?if($this->data) foreach ($this->data as $arStore): ?>
+<!-- ЗАГОЛОВОК ОРГАНИЗАЦИИ - начало -->
+<table class="dd_block">
+    <tr>
+        <td class="table_invisible">
+        <div class="dd_head">
+            <b><span><?if($arStore["area_id"] != $arStore["p_area_id"] && $arStore["drugstore_code"] = 1):?>Интернет-аптека: <?endif?><?=$arStore["dd_inet_name"]?></span></b>
+            <div><?=$arStore["area_fullname"]?> - <?=$arStore["district_iname"]?></div>
+            <?if($arStore["dd_id"]):?>
+                <?if($arStore["drugstore_department_adress"]):?><div>Адрес: <?=$arStore["drugstore_department_adress"]?></div><?endif?>
+                <?if($arStore["drugstore_department_tel"]):?><div>Телефон: <?=$arStore["drugstore_department_tel"]?></div><?endif?>
+                <?if($arStore["firm_href"]):?><div>Сайт: <a class="a_black" href="http://<?=$arStore["firm_href"]?>"><?=$arStore["firm_href"]?></a></div><?endif?>
+                <?if($arStore["firm_href2"]):?><div>Сайт: <a class="a_black" href="http://<?=$arStore["firm_href2"]?>"><?=$arStore["firm_href2"]?></a></div><?endif?>
+            <?endif?>
+            <?if($arStore["inet_flag2"]):?><div><b><span style="color:green;">Доставка по России</span></b></div><?endif?>
+            <?if($arStore["inet_flag1"]):?><div><b><span style="color:green;">Доставка по городу</span></b></div><?endif?>
+            <?if(($arStore["dd_ShowPrice"] || $arStore["ig_ShowPrice"]) && $arStore["price_min"]):?><div><b><span style="color:green;">Цена на "<?=$arStore["medical_product_iname"]?>" - от <?=$arStore["price_min"]?> руб.</span></b></div><?endif?>
+        </div>
+        <div>
+            <table class="table_invisible">
+                <tr>
+                    <td class="table_invisible">
+                        <?if($arStore["firm_logo_image"]):?>
+                            <div class="logo">
+                                <img height="105" width="105" alt="" src="http://ftp.003ms.ru/firm_logo/_small/<?=$arStore["firm_logo_image"]?>"></img>
+                            </div>
+                        <?endif?>
+                    </td>
+                    <td class="table_invisible">
+                        <div>
+                            <?if($arStore["firm_inet_action"] || $arStore["firm_inet_action2"]):?>
+                                  <a class="action" href="<?if($arStore["mini_site"]):?>/action.aspx<?else:?>/firm/<?=$arStore["firm_latin"]?>/action.aspx<?endif?>"><img style="height:80px; width:80px;" alt="" src="http://ftp.003ms.ru/images/_small/action.png"></img></a>
+                            <?endif?>
+                            <?if($arStore["dd_24hour_flag"]):?>
+                                  <img src="http://ftp.003ms.ru/images/_small/24hours.png" class="full_time">
+                            <?endif?>
+                            <?=$arStore["dd_inet_note"]?>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div >
+            <table class="tovar_block" >
+                <tr>
+                    <td class="table_invisible">
+                        <? foreach ($arStore['tovars'] as $arTovar): ?>
+                        <div class="tovar">
+                            <a class="a_blue" href="/catalog/alert.aspx?text=Необходимо уточнить наличие по телефону (данные от 19.09.2012)&http=http://kazan.003ms.ru/firm/kazan-farm/search_text.aspx?mpn_id=261|amp;mp_id=682|amp;dd_id=578|amp;dsmp_id=9956661"><?=$arTovar["medical_product_iname"]?></a>
+                            <div class="pod_str">
+                                <?if($arTovar["pod_str"]["load_hs_price_min"]):?><?=number_format($arTovar["pod_str"]["load_hs_price_min"],2,'.',' ')?> руб. - <?endif?>
+                                <?=$arTovar["pod_str"]["lhs_name"]?>
+                            </div>
+                            <table class="table_invisible">
+                                <tr>
+                                    <td class="table_invisible"></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <? endforeach ?>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        </td>
+    </tr>
+</table>
+<!-- ЗАГОЛОВОК ОРГАНИЗАЦИИ - конец -->
+<? endforeach ?>
+<? // Zend_Debug::dump($this->data)?>
+</div>
