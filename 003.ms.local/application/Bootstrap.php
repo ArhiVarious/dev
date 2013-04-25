@@ -37,7 +37,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
         ini_set('mssql.charset', 'UTF-8');
         $link = mssql_pconnect($aConfig['mssql']['host'], $aConfig['mssql']['user'], $aConfig['mssql']['pass']);
         Zend_Registry::set('db', $link);
-    }
+        }
 
     /*public function _initCache() {
 
