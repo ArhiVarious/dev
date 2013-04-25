@@ -1,0 +1,22 @@
+nav, .datatable.head div {
+    display: none !important;
+}
+
+body {
+    width: 100pt;
+}
+
+.box-header.fixed, .datatable.head, .datatable.foot {
+    position: static;
+}
+section#maincontainer {
+    overflow: visible;
+}
+
+* {
+    word-wrap: break-word
+}
+
+.datatable, .datatable * {
+    width: 100% !important;
+}

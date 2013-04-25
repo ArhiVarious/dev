@@ -1,0 +1,16 @@
+<?
+$rand = rand();
+foreach($this->params as $n=>$v) if($str){$str .= '/'.$n.'/'.$v;} else $str .= $n.'/'.$v;
+$url = '/'.$this->module.'/'.$this->controller.'/'.$this->action.($str?'/'.$str:'');
+$id = md5($url.$rand);
+?>
+<div id="<?=$id?>" class="ajax_loading">
+    Загрузка
+    <script>
+        jQuery(document).ready(function($){
+            $.post('<?=$url?>', function(data) {
+                $('#<?=$id?>').replaceWith(data);
+            });
+        })
+    </script>
+</div>

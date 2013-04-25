@@ -1,0 +1,18 @@
+<div class="quick-actions">
+    <a href="<?=$this->url(array("module"=>"cabinet","controller"=>"reports","action"=>"outs", "firm"=>$this->firm_id))?>">
+        <span class="glyph new"></span>
+        Дефектура
+    </a>
+    <a href="<?=$this->url(array("module"=>"cabinet","controller"=>"reports","action"=>"directionsonfirm", "firm"=>$this->firm_id))?>">
+        <span class="glyph new"></span>
+        Направления в фирму
+    </a>
+    <a href="<?=$this->url(array("module"=>"cabinet","controller"=>"reports","action"=>"demandanddirection", "firm"=>$this->firm_id))?>">
+        <span class="glyph new"></span>
+        Спрос и направления
+    </a>
+    <a href="<?=$this->url(array("module"=>"cabinet","controller"=>"reports","action"=>"presence", "firm"=>$this->firm_id))?>">
+        <span class="glyph new"></span>
+        Номенклатура (наличие и цены) 
+    </a>
+</div>
