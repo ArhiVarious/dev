@@ -43,7 +43,7 @@ class Zend_Db_Adapter_Pdo_Mssql extends Zend_Db_Adapter_Pdo_Abstract
      *
      * @var string
      */
-    protected $_pdoType = 'mssql';
+    protected $_pdoType = 'dblib';
 
     /**
      * Keys are UPPERCASE SQL datatypes or the constants
