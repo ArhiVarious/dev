@@ -46,7 +46,6 @@ class Smlib_Db_MssqlConn {
                     'password'  => $this->dbPass,
                     'dbname'    => $this->dbName
                 ));
-        $db->
         $stmt = $db->query($sqlQuery, $params);
         $res = $stmt->fetchAll();
         return $res;

@@ -37,6 +37,16 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
         ini_set('mssql.charset', 'UTF-8');
         $link = mssql_pconnect($aConfig['mssql']['host'], $aConfig['mssql']['user'], $aConfig['mssql']['pass']);
         Zend_Registry::set('db', $link);
+        
+        $dbConfig = $this->getOption('dbconn');
+        Zend_Registry::set('dbconn', $dbConfig);
+        
+        $d = new Smlib_Db_MssqlConn();
+        $sql = 'select 1 as aaa select 2 as bbb';
+        $res = $d->getResultQuery('ch_site_code', $sql);
+        var_dump($res);
+        Zend_Debug::dump($res);
+        //Zend_Debug::dump('res[0] = '.$res[1][0]['bbb']);
         }
 
     /*public function _initCache() {
