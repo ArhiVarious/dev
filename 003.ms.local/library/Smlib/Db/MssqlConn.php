@@ -23,10 +23,10 @@ class Smlib_Db_MssqlConn {
     protected $dbHost;      // хост базы данных
     protected $dbUser;      // пользователь  базы данных
     protected $dbPass;      // пароль пользователя
-    protected $dbName;      // имя базы данных
-    protected $timeSpend;   // время запроса
-    //protected $db[];        
-    
+    protected $timePrepareSpend;   // время запроса
+    protected $timeQuerySpend;   // время запроса
+    protected $timeFetchSpend;   // время запроса
+    protected $db;          // массив подключений
     
     // конструктор
     public function __construct($connName = 'default') {
@@ -37,17 +37,66 @@ class Smlib_Db_MssqlConn {
     }
     
     // функции
-    public function getResultQuery($dbName, $sqlQuery, $params = NULL){
-        $this->dbName = $dbName;
-        $db = Zend_Db::factory('Pdo_Mssql',
-                array(
-                    'host'      => $this->dbHost,
-                    'username'  => $this->dbUser,
-                    'password'  => $this->dbPass,
-                    'dbname'    => $this->dbName
-                ));
-        $stmt = $db->query($sqlQuery, $params);
+    public function getHost(){
+        return $this->dbHost;
+    }
+
+    public function getUser(){
+        return $this->dbUser;
+    }
+
+    public function getPass(){
+        return $this->dbPass;
+    }
+
+    public function getTimeFetchSpend(){
+        return $this->timeFetchSpend*1000;
+    }
+
+    public function getTimePrepareSpend(){
+        return $this->timePrepareSpend*1000;
+    }
+
+    public function getTimeQuerySpend(){
+        return $this->timeQuerySpend*1000;
+    }
+    
+    public function getDbConnection($dbName){
+        return $this->db[$dbName];
+    }
+
+    public function getResultQuery($dbName, $sqlQuery, $params = NULL){ //$dbName - имя базы данных
+        $mtime = microtime(); 
+        $mtime = explode(" ",$mtime); 
+        $mtime = $mtime[1] + $mtime[0]; 
+        $tstart = $mtime; 
+        if($this->db[$dbName] == NULL)
+        {
+            $this->db[$dbName] = Zend_Db::factory('Pdo_Mssql',
+                    array(
+                        'host'      => $this->dbHost,
+                        'username'  => $this->dbUser,
+                        'password'  => $this->dbPass,
+                        'dbname'    => $dbName
+                    ));
+        }
+        $mtime = microtime(); 
+        $mtime = explode(" ",$mtime); 
+        $mtime = $mtime[1] + $mtime[0]; 
+        $tend = $mtime; 
+        $this->timePrepareSpend = ($tend - $tstart);
+        $stmt = $this->db[$dbName]->query($sqlQuery, $params);
+        $mtime = microtime(); 
+        $mtime = explode(" ",$mtime); 
+        $mtime = $mtime[1] + $mtime[0]; 
+        $tend = $mtime; 
+        $this->timeQuerySpend = ($tend - $tstart);
         $res = $stmt->fetchAll();
+        $mtime = microtime(); 
+        $mtime = explode(" ",$mtime); 
+        $mtime = $mtime[1] + $mtime[0]; 
+        $tend = $mtime; 
+        $this->timeFetchSpend = ($tend - $tstart);
         return $res;
     }
 }
