@@ -178,7 +178,7 @@ class Med_Model_Search {
     }
     
     public function getSearchMedicalProductNames($query = ''){
-        $sql = "exec ch_site.dbo.p_inet_search_mpn_fast '".$_SERVER["HTTP_HOST"]."', '/', '".$query."'";
+        $sql = "exec ch_site.dbo.p_inet_search_mpn_fast '".explode(':',$_SERVER["HTTP_HOST"])[0]."', '/', '".$query."'";
         mssql_select_db('ch_site', $this->link);
         $query = mssql_query($sql, $this->link);
         while ($row = mssql_fetch_assoc($query))
@@ -189,7 +189,7 @@ class Med_Model_Search {
     public function getSearchDataByMpn($s = '', $id=-1)
     {
         $sql = "
-            exec dbo.p_inet_search_mpn_new ".$id.",  '".$s."',  '".$_SERVER["HTTP_HOST"]."',  ''
+            exec dbo.p_inet_search_mpn_new ".$id.",  '".$s."',  '".explode(':',$_SERVER["HTTP_HOST"])[0]."',  ''
         ";
         mssql_select_db('ch_d_1', $this->link);
         $query = mssql_query($sql, $this->link);

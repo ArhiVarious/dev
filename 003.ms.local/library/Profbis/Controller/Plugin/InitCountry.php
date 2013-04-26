@@ -12,7 +12,7 @@
  */
 class Profbis_Controller_Plugin_InitCountry extends Zend_Controller_Plugin_Abstract {
     public function dispatchLoopStartup(Zend_Controller_Request_Abstract $request) {
-        $data = (new Med_Model_Main())->getDomainDataByHost($_SERVER["HTTP_HOST"]);
+        $data = (new Med_Model_Main())->getDomainDataByHost(explode(':',$_SERVER["HTTP_HOST"])[0]);
         $view = Zend_Controller_Front::getInstance()
         ->getParam('bootstrap')
         ->getResource('view');

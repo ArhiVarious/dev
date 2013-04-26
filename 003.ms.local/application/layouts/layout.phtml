@@ -72,11 +72,11 @@
                         <?php echo $this->action('partners',
                                  'blocks',
                                  'main',
-                                 array('host' => $_SERVER["HTTP_HOST"],'noajax' => '0')); ?>
+                                 array('host' => explode(':',$_SERVER["HTTP_HOST"])[0],'noajax' => '0')); ?>
                         <?php echo $this->action('recomendations',
                                  'blocks',
                                  'main',
-                                 array('host' => $_SERVER["HTTP_HOST"], 'mp_id' => $this->mp['medical_product_name_id'], 'noajax' => '0')); ?>
+                                 array('host' => explode(':',$_SERVER["HTTP_HOST"])[0], 'mp_id' => $this->mp['medical_product_name_id'], 'noajax' => '0')); ?>
                     </td>
                     <?endif?>
                 </tr>

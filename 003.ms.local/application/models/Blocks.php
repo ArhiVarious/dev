@@ -87,7 +87,7 @@ class Med_Model_Blocks {
     
     public function getYandexDirect($area=0,$mp=0,$path='')
     {
-        $sql = "select dbo.f_yandex_direct('".$_SERVER["HTTP_HOST"]."', '".$path."', ".$area.", ".$mp.") as html";
+        $sql = "select dbo.f_yandex_direct('".explode(':',$_SERVER["HTTP_HOST"])[0]."', '".$path."', ".$area.", ".$mp.") as html";
         mssql_select_db('ch_site_code', $this->link);
         $query = mssql_query($sql, $this->link);
         return mssql_fetch_assoc($query);
@@ -95,7 +95,7 @@ class Med_Model_Blocks {
     
     public function getHeadMenu()
     {
-        $sql = "exec p_inet_menu_top2 '".$_SERVER["HTTP_HOST"]."'";
+        $sql = "exec p_inet_menu_top2 '".explode(':',explode(':',$_SERVER["HTTP_HOST"])[0])[0]."'";
         mssql_select_db('ch_site_code_old', $this->link);
         $query = mssql_query($sql, $this->link);
         while($row = mssql_fetch_assoc($query))
@@ -105,7 +105,7 @@ class Med_Model_Blocks {
     
     public function getTopMenu($url)
     {
-        $sql = "exec dbo.p_inet_menu_top '".$_SERVER["HTTP_HOST"]."', '".$url."'";
+        $sql = "exec dbo.p_inet_menu_top '".explode(':',$_SERVER["HTTP_HOST"])[0]."', '".$url."'";
         mssql_select_db('ch_site_code_old', $this->link);
         $query = mssql_query($sql, $this->link);
         $data = null;

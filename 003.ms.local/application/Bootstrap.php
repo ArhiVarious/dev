@@ -41,11 +41,11 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
         $dbConfig = $this->getOption('dbconn');
         Zend_Registry::set('dbconn', $dbConfig);
         
-        $d = new Smlib_Db_MssqlConn();
-        $sql = "exec ch_site_code.dbo.p_get_mca :host, :path";
-        $res = $d->getResultQuery('1', $sql, array(':host'=>$_SERVER['HTTP_HOST'], ':path'=>'catalog2/a/analgin.aspx'));
-        Zend_Debug::dump($res);
-        Zend_Debug::dump('PrepareTime = '.$d->getTimePrepareSpend().', QueryTime = '.$d->getTimeQuerySpend().', FetchTime = '.$d->getTimeFetchSpend());
+//        $d = new Smlib_Db_MssqlConn();
+//        $sql = "exec ch_site_code.dbo.p_get_mca :host, :path";
+//        $res = $d->getResultQuery('1', $sql, array(':host'=>$_SERVER['HTTP_HOST'], ':path'=>'catalog2/a/analgin.aspx'));
+//        Zend_Debug::dump($res);
+//        Zend_Debug::dump('PrepareTime = '.$d->getTimePrepareSpend().', QueryTime = '.$d->getTimeQuerySpend().', FetchTime = '.$d->getTimeFetchSpend());
     }
 
     /*public function _initCache() {

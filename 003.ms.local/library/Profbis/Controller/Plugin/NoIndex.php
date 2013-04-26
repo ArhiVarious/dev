@@ -16,7 +16,7 @@ class Profbis_Controller_Plugin_NoIndex extends Zend_Controller_Plugin_Abstract 
             ->getParam('bootstrap')
             ->getResource('view');
         $model = new Med_Model_Main();
-        $s = (bool)$model->isIndexedPage($_SERVER["HTTP_HOST"].$request->getRequestUri());
+        $s = (bool)$model->isIndexedPage(explode(':',$_SERVER["HTTP_HOST"])[0].$request->getRequestUri());
         $view->noIndex = rand(0,1);
     }
 }
