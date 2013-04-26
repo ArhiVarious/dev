@@ -66,10 +66,9 @@ class Smlib_Db_MssqlConn {
     }
 
     public function getResultQuery($dbName, $sqlQuery, $params = NULL){ //$dbName - имя базы данных
-        $mtime = microtime(); 
-        $mtime = explode(" ",$mtime); 
-        $mtime = $mtime[1] + $mtime[0]; 
-        $tstart = $mtime; 
+        $mtime = explode(" ", microtime()); 
+        $tstart = $mtime[1] + $mtime[0]; 
+        
         if($this->db[$dbName] == NULL)
         {
             $this->db[$dbName] = Zend_Db::factory('Pdo_Mssql',
@@ -80,22 +79,25 @@ class Smlib_Db_MssqlConn {
                         'dbname'    => $dbName
                     ));
         }
-        $mtime = microtime(); 
-        $mtime = explode(" ",$mtime); 
-        $mtime = $mtime[1] + $mtime[0]; 
-        $tend = $mtime; 
+        
+        $mtime = explode(" ", microtime()); 
+        $tend = $mtime[1] + $mtime[0]; 
         $this->timePrepareSpend = ($tend - $tstart);
+        $mtime = explode(" ", microtime()); 
+        $tstart = $mtime[1] + $mtime[0]; 
+        
         $stmt = $this->db[$dbName]->query($sqlQuery, $params);
-        $mtime = microtime(); 
-        $mtime = explode(" ",$mtime); 
-        $mtime = $mtime[1] + $mtime[0]; 
-        $tend = $mtime; 
+        
+        $mtime = explode(" ", microtime()); 
+        $tend = $mtime[1] + $mtime[0]; 
         $this->timeQuerySpend = ($tend - $tstart);
+        $mtime = explode(" ", microtime()); 
+        $tstart = $mtime[1] + $mtime[0]; 
+        
         $res = $stmt->fetchAll();
-        $mtime = microtime(); 
-        $mtime = explode(" ",$mtime); 
-        $mtime = $mtime[1] + $mtime[0]; 
-        $tend = $mtime; 
+
+        $mtime = explode(" ", microtime()); 
+        $tend = $mtime[1] + $mtime[0]; 
         $this->timeFetchSpend = ($tend - $tstart);
         return $res;
     }
