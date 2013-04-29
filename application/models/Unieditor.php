@@ -5,7 +5,7 @@
  *
  * @автор Artem
  */
-class Unieditor {
+class Med_Model_Unieditor {
     // данные для таблиц
     protected $dbName;      // имя базы данных
     protected $tbTitle;     // Название таблицы для отображения
@@ -14,8 +14,9 @@ class Unieditor {
                             *  name - имя поля
                             *  title - название (для отображения)
                             *  type - тип поля
-                            *  visible (1/0) - видимость
+                            *  isVisible (1/0) - видимость
                             *  isNeeded (1/0) - необходимость 
+                            *  isNull (1/0) - может ли быть NULL
                             *  width - ширина
                             */ 
     protected $sqlQueries;   // массив sql-запросов на выборку, вставку, обновление, удаления (select, insert, update, delete)
@@ -33,8 +34,9 @@ class Unieditor {
         $this->dbName = $dbName;
         $this->idFieldName = $idFieldName;
         $this->fieldsDesc = $this->dbConn->getResultQuery($this->dbName, $sqlFieldsDescription);
-        $this->sqlQueries = $this->dbConn->getResultQuery($this->dbName, $sqlQueryDesc);
+        //$this->sqlQueries = $this->dbConn->getResultQuery($this->dbName, $sqlQueryDesc);
         $this->tbTitle = $tbTitle;
+        $this->view->tbTitle = $this->tbTitle;
     }
     
     public function getDataTable(){
