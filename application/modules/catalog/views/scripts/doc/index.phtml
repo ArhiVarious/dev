@@ -1,0 +1,12 @@
+<div id="main_header" style="text-align:left; padding:0px 0px 0px 8px;">
+    <h1>
+        <?=$this->h1?>
+    </h1>
+</div>
+<div id="div_context2">
+    <?=$this->yandex_direct['html']?>
+    <?foreach ($this->data['data'] as $t):?>
+        <h2><?=$t['ia_title']?></h2>
+        <p><?=str_replace("\n", "<p>", $t['ia_text'])?>
+    <? endforeach;?>
+</div>

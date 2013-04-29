@@ -1,0 +1,31 @@
+<div id="yandex_map" style="padding:4px 0px 0px 0px;">
+    <script src="http://api-maps.yandex.ru/1.1/index.xml?key=<?=$this->data["heads"][0]["map_key"]?>&modules=pmap&wizard=constructor" type="text/javascript"></script>
+    <script type="text/javascript">
+        window.onload = function () {
+            var map = new YMaps.Map(document.getElementById("YMapsID"));
+            map.setCenter(new YMaps.GeoPoint(<?=$this->data["heads"][0]["map_longitude"]?>, <?=$this->data["heads"][0]["map_latitude"]?>), <?=$this->data["heads"][0]["map_scale"]?>, YMaps.MapType.MAP);
+            map.addControl(new YMaps.Zoom());
+            YMaps.MapType.PMAP.getName = function () { return "Народная"; };
+            map.addControl(new YMaps.TypeControl([
+                YMaps.MapType.MAP,
+                YMaps.MapType.SATELLITE,
+                YMaps.MapType.PMAP
+            ], [0, 1, 2]));
+            var toolbar = new YMaps.ToolBar();
+            var button = new YMaps.ToolBarButton({caption: "&nbsp;&nbsp;&nbsp;", hint: "Показать координаты центра карты."});
+            YMaps.Events.observe(button, button.Events.Click, function () {alert(this.getCenter());}, map);
+            toolbar.add(button);
+            map.addControl(toolbar);
+
+  
+            <? foreach ($this->data['strs'] as $aPoint): ?>
+                var placemark = new YMaps.Placemark(new YMaps.GeoPoint(<?=$aPoint["longitude"]?>, <?=$aPoint["latitude"]?>), {style: "default#hospitalIcon"});
+                placemark.name = "<?=$aPoint["dd_inet_name"]?>";
+                placemark.description = "Адрес: <?=$aPoint["drugstore_department_adress"]?><br/><a href=http://<?=$aPoint["area_inetname"]?>.003ms.ru/firm/<?=$aPoint["firm_latin"]?>/shema.aspx?dd_id=<?=$aPoint["drugstore_department_id"]?>>посмотреть телефон и схему проезда</a>";
+                map.addOverlay(placemark);
+            <? endforeach ?>
+        }
+    </script>
+    <div style="border:1px solid silver; margin:0px -1px 0px -1px; border-radius:3px;"><div id="YMapsID" style="width:100%;height:700px;"></div></div>
+</div>
+

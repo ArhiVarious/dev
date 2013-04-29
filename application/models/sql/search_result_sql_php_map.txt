@@ -1,0 +1,5 @@
+select 'heads' as sql_result_type
+select * from @t_map1
+
+select 'strs' as sql_result_type
+select * from @t_map2

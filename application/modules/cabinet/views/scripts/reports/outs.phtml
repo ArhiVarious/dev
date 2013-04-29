@@ -1,0 +1,68 @@
+<div class="box">
+    <div class="box-header fixed">
+        <h1>Дефектура</h1>
+    </div>
+    <table class="datatable head" style="position: absolute;width: 1520px;top: 41px;background: #F8F8F8;">
+        <thead>
+            <tr>
+                <th colspan="6">
+                    <div>
+                        <label>Дефектура по<select name="presence_val" style="width: 80px"><option value="city">городу</option><option value="district">району</option><option value="drugstore">аптеке</option></select></label>&nbsp;&nbsp;&nbsp;&nbsp;
+                        <label>Спрос<select name="query_count" style="width: 130px"><option value="0">------------------------</option><option value="1">присутствует</option><option value="2">отсутствует</option></select</label>
+                    </div>
+                </th>
+            </tr>
+            <tr>
+                <th style="width:26%" class="sorting filtered" data-key="medical_product_name_name" data-sort="">
+                    Торговое наименование
+                    <div style="position: absolute; bottom: -3px; left: 0px; width: 100%; display: block;">
+                        <input name="medical_product_name_name" type="text" style="height: 17px;font-size: 12px;width: 100%;margin-bottom: 2px;">
+                    </div>
+                </th>
+                <th style="width:26%" class="sorting filtered" data-key="medical_product_name" data-sort="">
+                    Дозировка
+                    <div style="position: absolute; bottom: -3px; left: 0px; width: 100%;">
+                        <input name="medical_product_name" type="text" style="height: 17px;font-size: 12px;width: 100%;margin-bottom: 2px;">
+                    </div>
+                </th>
+                <th style="width:12%" class="sorting" data-key="query_count" data-sort="" data-int="true">Спрос по городу</th>
+                <th style="width:12%" class="sorting" data-key="presence_val" data-sort="" data-int="true">Наличие по городу</th>
+            </tr>
+        </thead>
+    </table>
+    <table class="datatable scrolled" data-page="<?= $this->table_meta["page"] ?>" data-url="<?= $this->url(array("module" => "cabinet", "controller" => "reports", "action" => "outs", "firm" => $this->firm_id, "json" => 1)) ?>">
+        <tbody>
+            <? if ($this->table) foreach ($this->table as $arRow): ?>
+                    <tr>
+                        <td style="width:26%"><?= $arRow['medical_product_name_name'] ?></td>
+                        <td style="width:26%"><?= $arRow['medical_product_name'] ?></td>
+                        <td style="width:12%"><?= $arRow['query_count'] ?></td>
+                        <td style="width:12%"><?= $arRow['presence_val'] ?></td>
+                    </tr>
+                <? endforeach; ?>
+        </tbody>
+    </table>
+    <table class="datatable foot" style="position: absolute;width: 1520px;bottom: 41px;background: #F8F8F8;">
+        <thead>
+            <tr>
+                <th style="width:26%">Итоги</th>
+                <th style="width:26%"></th>
+                <th style="width:12%" id="query_count_sum"><?= $this->table_meta['cnt']['query_count'] ?></th>
+                <th style="width:12%"></th>
+            </tr>
+        </thead>
+    </table>
+    <div class="action_bar nomargin fixed">
+        <div class="dataTables_info" id="str_cnt">Всего <i><?= $this->table_meta['cnt']['cnt'] ?></i> строк</div>
+        <div class="strong dataTables_paginate red" id="load_data" style="display:none">Загрузка данных</div>
+    </div>
+</div>
+
+<script id="datatableRowTemplate" type="text/x-jquery-tmpl">
+    <tr>
+        <td style="width:26%">${$data.medical_product_name_name}</td>
+        <td style="width:26%">${$data.medical_product_name}</td>
+        <td style="width:12%">${$data.query_count}</td>
+        <td style="width:12%">${$data.presence_val}</td>
+    </tr>
+</script>

@@ -1,0 +1,65 @@
+  <div class="box">
+        <div class="box-header fixed">
+            <h1>Номенклатура (наличие и цены)</h1>
+        </div>
+        <table class="datatable head" style="position: absolute;width: 1520px;top: 41px;background: #F8F8F8;">
+            <thead>
+                <tr>
+                    <th style="width:6%" class="sorting" data-key="presence_id" data-sort="" data-int="true">Наличие</th>
+                    <th style="width:8%" class="sorting filtered" data-key="ds_mp_presence_tsdate" data-sort="">Дата изменения</th>
+                    <th style="width:20%" class="sorting filtered" data-key="medical_product_name_name" data-sort="">
+                        Торговое наименование
+                        <div style="position: absolute; bottom: -3px; left: 0px; width: 100%; display: block;">
+                            <input name="mp.        medical_product_name_name" type="text" style="height: 17px;font-size: 12px;width: 100%;margin-bottom: 2px;">
+                        </div>
+                    </th>
+                    <th style="width:20%" class="sorting filtered" data-key="medical_product_name" data-sort="">
+                        Дозировка
+                        <div style="position: absolute; bottom: -3px; left: 0px; width: 100%;">
+                            <input name="medical_product_name" type="text" style="height: 17px;font-size: 12px;width: 100%;margin-bottom: 2px;">
+                        </div>
+                    </th>
+                    <th style="width:6%" class="sorting filtered" data-key="ds_medical_product_price" data-sort="">Цена</th>
+                    <th style="width:10%" class="sorting filtered" data-key="doctor_hours" data-sort="">Часы работы</th>
+                    <th style="width:12%" class="sorting filtered" data-key="doctor_fio" data-sort="">ФИО врача</th>
+                    <th style="width:10%" class="sorting filtered" data-key="doctor_phone" data-sort="">Телефон врача</th>
+                    <th style="width:6%" class="sorting filtered" data-key="Кнопка_записать" data-sort="">Кнопка</th>
+                </tr>
+            </thead>
+        </table>
+        <table class="datatable scrolled " data-checker_url="<?= $this->url(array("module" => "cabinet", "controller" => "dsmp", "action" => "setpresence", "json" => 1)) ?>" data-page="<?= $this->table_meta["page"] ?>" data-url="<?= $this->url(array("module" => "cabinet", "controller" => "reports", "action" => "presence", "firm" => $this->firm_id, "json" => 1)) ?>">
+            <tbody>
+                <? if ($this->table) foreach ($this->table as $arRow): ?>
+                        <tr>
+                                <td class="checker" data-presence="<?=$arRow['presence_id']?>" data-mpid="<?= $arRow['ds_medical_product_id'] ?>" style="width:6%"><?= $arRow['presence_id']?"Есть":"Нет" ?></td>
+                                <td style="width:8%"><?= $arRow['ds_mp_presence_tsdate'] ?></td>
+                                <td style="width:20%"><?= $arRow['medical_product_name_name'] ?></td>
+                                <td style="width:20%"><?= $arRow['medical_product_name'] ?></td>
+                                <td style="width:6%"><?= $arRow['ds_medical_product_price'] ?></td>
+                                <td style="width:10%"><?= $arRow['doctor_hours'] ?></td>
+                                <td style="width:12%"><?= $arRow['doctor_fio'] ?></td>
+                                <td style="width:10%"><?= $arRow['doctor_phone'] ?></td>
+                                <td style="width:6%"><?= $arRow['Кнопка_записать'] ?></td>
+                        </tr>
+                    <? endforeach; ?>
+            </tbody>
+        </table>
+        <div class="action_bar nomargin fixed">
+            <div class="dataTables_info" id="str_cnt">Всего <i><?= $this->table_meta['cnt']['cnt'] ?></i> строк</div>
+            <div class="strong dataTables_paginate red" id="load_data" style="display:none">Загрузка данных</div>
+        </div>
+    </div>
+
+<script id="datatableRowTemplate" type="text/x-jquery-tmpl">
+    <tr>
+        <td style="width:6%" class="checker" data-presence="${$data.presence_id}" data-mpid="${$data.ds_medical_product_id}">${$data.presence_id?"Есть":"Нет"}</td>
+        <td style="width:8%">${$data.ds_mp_presence_tsdate}</td>
+        <td style="width:20%">${$data.medical_product_name_name}</td>
+        <td style="width:20%">${$data.medical_product_name}</td>
+        <td style="width:6%">${$data.ds_medical_product_price}</td>
+        <td style="width:10%">${$data.doctor_hours}</td>
+        <td style="width:12%">${$data.doctor_fio}</td>
+        <td style="width:10%">${$data.doctor_phone}</td>
+        <td style="width:6%">${$data.Кнопка_записать}</td>
+    </tr>
+</script>

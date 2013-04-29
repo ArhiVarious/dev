@@ -1,0 +1,22 @@
+<?if($this->partners):?>
+<div id="div_adv_banner">
+    <div class="hdr_block_main" style="margin-top:1px;"><div class="hdr_block_head">Наши партнёры</div>
+        <div class="hdr_block_text">
+            <table class="banner">
+                <?  foreach ($this->partners as $arPartner): ?>
+                <tr>
+                    <td class="banner">
+                        <a class="banner" target="_blank" rel="nofollow" href="<?=$arPartner["site_name"]?>/firm/<?=$arPartner["firm_latin"]?>/default.aspx?dd_id=<?=$arPartner["drugstore_department_id"]?>"><div class="banner_border"><img alt="" border="0" width="68" height="68" src="http://ftp.003ms.ru/firm_logo/_tiny/<?=$arPartner["firm_logo_image"]?>"></div></a>
+                    </td>
+                    <td class="banner" style="width:1px">
+                    </td>
+                    <td class="banner">
+                        <b><a class="banner" target="_blank" rel="nofollow" href="<?=$arPartner["site_name"]?>/firm/<?=$arPartner["firm_latin"]?>/default.aspx?dd_id=<?=$arPartner["drugstore_department_id"]?>"><?=$arPartner["firm_logo_name"]?></a></b><div class="banner"><?=$arPartner["firm_logo_text"]?></div>
+                    </td>
+                </tr>
+                <? endforeach; ?>
+            </table>
+        </div>
+    </div>
+</div>
+<?endif?>
