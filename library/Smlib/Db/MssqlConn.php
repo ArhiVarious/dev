@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Для корректной работы необходимо подготовить в реестре
+ * Для корректной работы необходимо подготовить в Bootstrap реестр:
  *       $dbConfig = $this->getOption('dbconn');
  *       Zend_Registry::set('dbconn', $dbConfig);
  *  
@@ -20,13 +20,13 @@
  */
 class Smlib_Db_MssqlConn {
     // данные
-    protected $dbHost;      // хост базы данных
-    protected $dbUser;      // пользователь  базы данных
-    protected $dbPass;      // пароль пользователя
-    protected $timePrepareSpend;   // время запроса
-    protected $timeQuerySpend;   // время запроса
-    protected $timeFetchSpend;   // время запроса
-    protected $db;          // массив подключений
+    protected $dbHost;              // хост базы данных
+    protected $dbUser;              // пользователь  базы данных
+    protected $dbPass;              // пароль пользователя
+    protected $timePrepareSpend;    // время запроса
+    protected $timeQuerySpend;      // время запроса
+    protected $timeFetchSpend;      // время запроса
+    protected $db;                  // массив подключений
     
     // конструктор
     public function __construct($connName = 'default') {
@@ -65,7 +65,18 @@ class Smlib_Db_MssqlConn {
         return $this->db[$dbName];
     }
 
-    public function getResultQuery($dbName, $sqlQuery, $params = NULL){ //$dbName - имя базы данных
+    public function getResultQuery($dbName, $sqlQuery, $params = NULL){
+                                                            /*
+                                                             * $dbName - имя базы данных
+                                                             * $sqlQuery - параметризированный запрос вида:
+                                                             *                  select :field from :database where :wh1 = :con1
+                                                             * $params - массив параметров для подстановки в запрос:
+                                                             *                  array(':field'=>'id', ':database'=>'ch_site', ':wh1'=>'id', ':con1'=>$id)
+                                                             * 
+                                                             * функция возвращает массив результата запроса:
+                                                             *                  $res[0]['fieldname']
+                                                             * 
+                                                             */
         $mtime = explode(" ", microtime()); 
         $tstart = $mtime[1] + $mtime[0]; 
         
@@ -76,7 +87,8 @@ class Smlib_Db_MssqlConn {
                         'host'      => $this->dbHost,
                         'username'  => $this->dbUser,
                         'password'  => $this->dbPass,
-                        'dbname'    => $dbName
+                        'dbname'    => $dbName,
+                        'charset'   => 'UTF-8'
                     ));
         }
         

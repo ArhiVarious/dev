@@ -6,7 +6,10 @@
  * @автор Artem
  */
 class Unieditor {
-    //put your code here
+    // данные для таблиц
+    protected $dbName;      // имя базы данных
+    protected $tbName;      // имя таблицы
+    protected $fieldsDesc;  // описание полей
 }
 
 ?>

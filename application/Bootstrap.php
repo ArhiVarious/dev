@@ -27,13 +27,13 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
         
 //        $d = new Smlib_Db_MssqlConn();
 //        $sql = 'select
-//  cast(aaa_id as int) as aaa_id,
-//  aaa_name
+//  cast(aaa_id as int) as aaa_id
+//  --#name ,aaa_name
 //  /*into*/
 //from
-//  ch_site..aaa with(nolock)
+//  aaa with(nolock)
 //where 1=1';
-//        $res = $d->getResultQuery('ch_site', $sql);
+//        $res = $d->getResultQuery('ch_site', str_replace('--#name', '', $sql));
 //        Zend_Debug::dump($res);
         
     }    
