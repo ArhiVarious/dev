@@ -27,6 +27,7 @@ class Smlib_Db_MssqlConn {
     protected $timeQuerySpend;      // время запроса
     protected $timeFetchSpend;      // время запроса
     protected $db;                  // массив подключений
+    protected $pconn;               // подключение к серверу
     
     // конструктор
     public function __construct($connName = 'default') {
@@ -34,6 +35,7 @@ class Smlib_Db_MssqlConn {
         $this->dbHost = $dbConfig[$connName]['host'];
         $this->dbUser = $dbConfig[$connName]['user'];
         $this->dbPass = $dbConfig[$connName]['pass'];
+        $this->pconn = mssql_pconnect($dbConfig[$connName]['host'], $dbConfig[$connName]['user'], $dbConfig[$connName]['pass']);
     }
     
     // функции
@@ -100,6 +102,9 @@ class Smlib_Db_MssqlConn {
                                                              *                  $res[0]['fieldname']
                                                              * 
                                                              */
+        
+        Zend_Debug::dump($sqlQuery);
+        
         $tstart = $this->getMicroTime(); 
         
         $this->getDbConnection($dbName);
@@ -115,6 +120,7 @@ class Smlib_Db_MssqlConn {
         $res = $stmt->fetchAll();
 
         $this->timeFetchSpend = ($this->getMicroTime() - $tstart);
+        Zend_Debug::dump($res);
         return $res;
     }
 }

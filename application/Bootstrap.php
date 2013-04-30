@@ -4,6 +4,8 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
 
     private $modules;
     private $registry;
+    private $logger;
+    private $writer;
     
     public function __construct($application) {
         parent::__construct($application);
@@ -25,19 +27,29 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
         $dbconn = $this->getOption('dbconn');
         Zend_Registry::set('dbconn', $dbconn);
         
+       
         
-//        $d = new Smlib_Db_MssqlConn();
-//        $sql = 'select top 10
+//        $d = new Smlib_Db_MssqlConn('mssql2');
+//        $sql = 'select top 10 
 //  cast(aaa_id as int) as aaa_id
 //  ,aaa_name
-//  /*into*/
 //from
 //  aaa with(nolock)
 //where 1=1';
-//        $res = $d->getResultQuery('ch_site', $sql);
+//        $res = $d->getResultQuery('ch_dump', $sql);
 //        Zend_Debug::dump($res);
 //        Zend_Debug::dump('count = '.count($res));
-        
+
+//        $d = new Smlib_Db_MssqlConn('mssql2');
+//        $sql = 'select top 10 
+//  *
+//from
+//  ch_d_1..aaa with(nolock)
+//where 1=1';
+//        $res = $d->getResultQuery('ch_d_1', $sql);
+//        Zend_Debug::dump($res);
+//        Zend_Debug::dump('count = '.count($res));
+
         
     }    
     

@@ -16,8 +16,7 @@ class Catalog_SearchController extends Zend_Controller_Action
 	$this->view->mp = $data['meta'];
         
         $this->view->headTitle($this->view->mp['medical_product_name_name'] ." - где купить в " . $this->view->domain_data['area_FullName2']);
-        Zend_Debug::dump('1111');
-        $tbEditor = new Smlib_TbEdit('ch_site',
+        $tbEditor = new Smlib_TbEdit('ch_d_1',
                 array(
                         array(  'name'=>'aaa_id',
                                 'title'=>'ИД',
@@ -26,7 +25,7 @@ class Catalog_SearchController extends Zend_Controller_Action
                                 'isNeeded'=>1,
                                 'isNull'=>0,
                                 'isReadOnly'=>0),
-                        array(  'name'=>'aaa',
+                        array(  'name'=>'aaa_name',
                                 'title'=>'Наименование',
                                 'type'=>'varchar',
                                 'isVisible'=>1,
@@ -40,13 +39,14 @@ class Catalog_SearchController extends Zend_Controller_Action
                         select
                           cast(aaa_id as int) as aaa_id,
                           aaa_name
-                          --into into ch_temp..:uid
+                          --into into ch_temp..xxx_temp_@uid
                         from
-                          ch_site..aaa with(nolock)
+                          ch_d_1..aaa with(nolock)
                         where 1=1
                         --id and aaa_id = @aaa_id
                         --view1 and aaa_name like 'А%'
                         --view2 and aaa_name like 'Б%'
+                        --order order by @order
                         ",
                     "insert"=>
                         "insert into aaa (aaa_name) values (@aaa_name)",
@@ -55,7 +55,12 @@ class Catalog_SearchController extends Zend_Controller_Action
                     "delete"=>
                         "delete from aaa aaa_id = @aaa_id"
                 ),
-                'Тестовая таблица');
+                array('aaa_name asc'),
+                'Тестовая таблица',
+                'mssql2');
+        
+        $tbEditor->prepareTable();
+        $this->view->t = $tbEditor;
     }
     
     public function priceAction()
