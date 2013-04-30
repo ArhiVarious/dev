@@ -25,16 +25,19 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
         $dbconn = $this->getOption('dbconn');
         Zend_Registry::set('dbconn', $dbconn);
         
+        
 //        $d = new Smlib_Db_MssqlConn();
-//        $sql = 'select
+//        $sql = 'select top 10
 //  cast(aaa_id as int) as aaa_id
-//  --#name ,aaa_name
+//  ,aaa_name
 //  /*into*/
 //from
 //  aaa with(nolock)
 //where 1=1';
-//        $res = $d->getResultQuery('ch_site', str_replace('--#name', '', $sql));
+//        $res = $d->getResultQuery('ch_site', $sql);
 //        Zend_Debug::dump($res);
+//        Zend_Debug::dump('count = '.count($res));
+        
         
     }    
     

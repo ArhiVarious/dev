@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Описание класса Unieditor
+ * Описание класса TbEdit
  *
  * @автор Artem
  */
-class Med_Model_Unieditor {
+class TbEdit {
     // данные для таблиц
     protected $dbName;      // имя базы данных
     protected $tbTitle;     // Название таблицы для отображения
@@ -17,6 +17,7 @@ class Med_Model_Unieditor {
                             *  isVisible (1/0) - видимость
                             *  isNeeded (1/0) - необходимость 
                             *  isNull (1/0) - может ли быть NULL
+                            *  isReadOnly (1/0) - только для чтения
                             *  width - ширина
                             */ 
     protected $sqlQueries;   // массив sql-запросов на выборку, вставку, обновление, удаления (select, insert, update, delete)
@@ -34,15 +35,21 @@ class Med_Model_Unieditor {
         $this->dbName = $dbName;
         $this->idFieldName = $idFieldName;
         $this->fieldsDesc = $this->dbConn->getResultQuery($this->dbName, $sqlFieldsDescription);
-        //$this->sqlQueries = $this->dbConn->getResultQuery($this->dbName, $sqlQueryDesc);
+        $this->sqlQueries = $this->dbConn->getResultQuery($this->dbName, $sqlQueryDesc);
         $this->tbTitle = $tbTitle;
-        $this->view->tbTitle = $this->tbTitle;
     }
     
-    public function getDataTable(){
-        //$this->view->
+    public function getTableTitle(){
+        return $this->tbTitle;
     }
     
+    public function getTableData(){
+        return $this->dbConn->getResultQuery($this->dbName, $this->sqlQueries['qselect']);
+    }
+    
+    public function getFields(){
+        return $this->fieldsDesc;
+    }
 }
 
 ?>

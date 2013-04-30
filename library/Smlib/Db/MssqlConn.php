@@ -61,10 +61,33 @@ class Smlib_Db_MssqlConn {
         return $this->timeQuerySpend*1000;
     }
     
+    protected function getMicroTime(){
+        $mtime = explode(" ", microtime()); 
+        $res = $mtime[1] + $mtime[0]; 
+    }
+
+    // функция возвращает соединение с БД, если оно еще не создано - создает его
     public function getDbConnection($dbName){
+        if($this->db[$dbName] == NULL)
+        {
+            $this->db[$dbName] = Zend_Db::factory('Pdo_Mssql',
+                    array(
+                        'host'      => $this->dbHost,
+                        'username'  => $this->dbUser,
+                        'password'  => $this->dbPass,
+                        'dbname'    => $dbName,
+                        'charset'   => 'UTF-8'
+                    ));
+        }
         return $this->db[$dbName];
     }
 
+    // функция возвращает select для формирования выборки
+    public function getSelect($dbName){
+        return $this->getDbConnection($dbName)->select();
+    }
+    
+    // функция выполнения запроса
     public function getResultQuery($dbName, $sqlQuery, $params = NULL){
                                                             /*
                                                              * $dbName - имя базы данных
@@ -77,40 +100,21 @@ class Smlib_Db_MssqlConn {
                                                              *                  $res[0]['fieldname']
                                                              * 
                                                              */
-        $mtime = explode(" ", microtime()); 
-        $tstart = $mtime[1] + $mtime[0]; 
+        $tstart = $this->getMicroTime(); 
         
-        if($this->db[$dbName] == NULL)
-        {
-            $this->db[$dbName] = Zend_Db::factory('Pdo_Mssql',
-                    array(
-                        'host'      => $this->dbHost,
-                        'username'  => $this->dbUser,
-                        'password'  => $this->dbPass,
-                        'dbname'    => $dbName,
-                        'charset'   => 'UTF-8'
-                    ));
-        }
+        $this->getDbConnection($dbName);
         
-        $mtime = explode(" ", microtime()); 
-        $tend = $mtime[1] + $mtime[0]; 
-        $this->timePrepareSpend = ($tend - $tstart);
-        $mtime = explode(" ", microtime()); 
-        $tstart = $mtime[1] + $mtime[0]; 
+        $this->timePrepareSpend = ($this->getMicroTime() - $tstart);
+        $tstart = $this->getMicroTime(); 
         
         $stmt = $this->db[$dbName]->query($sqlQuery, $params);
         
-        $mtime = explode(" ", microtime()); 
-        $tend = $mtime[1] + $mtime[0]; 
-        $this->timeQuerySpend = ($tend - $tstart);
-        $mtime = explode(" ", microtime()); 
-        $tstart = $mtime[1] + $mtime[0]; 
+        $this->timeQuerySpend = ($this->getMicroTime() - $tstart);
+        $tstart = $this->getMicroTime(); 
         
         $res = $stmt->fetchAll();
 
-        $mtime = explode(" ", microtime()); 
-        $tend = $mtime[1] + $mtime[0]; 
-        $this->timeFetchSpend = ($tend - $tstart);
+        $this->timeFetchSpend = ($this->getMicroTime() - $tstart);
         return $res;
     }
 }
