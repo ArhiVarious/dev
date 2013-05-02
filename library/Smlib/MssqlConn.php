@@ -28,6 +28,7 @@ class Smlib_MssqlConn {
     protected $timeFetchSpend;      // время запроса
     protected $pconn;               // подключение к серверу
     protected $error;               // ошибка работы с БД
+    protected $dtFormat;            // формат даты/времени
     
     // конструктор
     public function __construct($connName = 'default') {
@@ -35,6 +36,7 @@ class Smlib_MssqlConn {
         $this->dbHost = $dbConfig[$connName]['host'];
         $this->dbUser = $dbConfig[$connName]['user'];
         $this->dbPass = $dbConfig[$connName]['pass'];
+        $this->dtFormat = $dbConfig[$connName]['dtformat'];
         $this->pconn = mssql_pconnect($dbConfig[$connName]['host'], $dbConfig[$connName]['user'], $dbConfig[$connName]['pass']);
     }
     
@@ -92,9 +94,9 @@ class Smlib_MssqlConn {
                                                             /*
                                                              * $dbName - имя базы данных
                                                              * $sqlQuery - параметризированный запрос вида:
-                                                             *                  select field from :database where :wh1 = :con1
+                                                             *                  select field from database where field = @con1
                                                              * $params - массив параметров для подстановки в запрос:
-                                                             *                  array(":field'=>'id', ':database'=>'ch_site', ':wh1'=>'id', ':con1'=>$id)
+                                                             *                  array("@field'=>'id', ':database'=>'ch_site', ':wh1'=>'id', ':con1'=>$id)
                                                              * 
                                                              * функция возвращает массив результата запроса:
                                                              *                  $res[0]['fieldname']
@@ -107,6 +109,7 @@ class Smlib_MssqlConn {
         
         if($this->getDbConnection($dbName)){
             if(empty($params)){
+                // запрос без параметров, просто выполняем
                 $this->timePrepareSpend = ($this->getMicroTime() - $tstart);
                 $tstart = $this->getMicroTime(); 
                 $query = mssql_query($sqlQuery, $this->pconn);
@@ -124,6 +127,37 @@ class Smlib_MssqlConn {
             }
             else{
                 // обработка параметров
+                if(is_array($params)){
+                    foreach ($params as $key => $value) {
+                        if($value instanceof DateTime){
+                            // дата
+                            $value = "'".$value->format($this->dtFormat)."'";
+                        }
+                        else{
+                            switch (gettype($value)){
+                                case 'integer':
+                                case 'double':
+                                case 'boolean':
+                                    break;
+                                case 'string':
+                                    $res_words = array('declare', 'select', 'truncate', 'delete', 'insert', 'create', 'drop');
+                                    $replace_to = array('dec<!---->lare', 'sel<!---->ect', 'trun<!---->cate', 'del<!---->ete', 'ins<!---->ert', 'cre<!---->ate', 'dr<!---->op');
+                                    $value = str_ireplace($res_words, $replace_to, $value);
+                                    $value = "'".$value."'";
+                                    break;
+                                default :
+                                    $this->error = "Wrong parameter type in $sqlQuery";
+                                    return FALSE;
+                                    break;
+                            }
+                        }
+                        $sqlQuery = str_replace($key, $value, $sqlQuery);
+                    }
+                }
+                else{
+                    $this->error = "Params must be an array";
+                    return FALSE;
+                }
             }
         }
         //Zend_Debug::dump($res);
