@@ -94,9 +94,9 @@ class Smlib_MssqlConn {
                                                             /*
                                                              * $dbName - имя базы данных
                                                              * $sqlQuery - параметризированный запрос вида:
-                                                             *                  select field from database where field = @con1
+                                                             *                  select field from database where field = @con1@
                                                              * $params - массив параметров для подстановки в запрос:
-                                                             *                  array("@field'=>'id', ':database'=>'ch_site', ':wh1'=>'id', ':con1'=>$id)
+                                                             *                  array("@con1@'=>'id')
                                                              * 
                                                              * функция возвращает массив результата запроса:
                                                              *                  $res[0]['fieldname']
@@ -108,30 +108,15 @@ class Smlib_MssqlConn {
         $tstart = $this->getMicroTime(); 
         
         if($this->getDbConnection($dbName)){
-            if(empty($params)){
-                // запрос без параметров, просто выполняем
-                $this->timePrepareSpend = ($this->getMicroTime() - $tstart);
-                $tstart = $this->getMicroTime(); 
-                $query = mssql_query($sqlQuery, $this->pconn);
-                if(!$query){
-                    $this->error = "Unable to prepare query: $sqlQuery";
-                    return FALSE;
-                }
-                $this->timeQuerySpend = ($this->getMicroTime() - $tstart);
-                $tstart = $this->getMicroTime(); 
-                while($row = mssql_fetch_assoc($query)){
-                    $res[] = $row;
-                }
-                $this->timeFetchSpend = ($this->getMicroTime() - $tstart);
-                return $res;
-            }
-            else{
+            if(!empty($params)){
                 // обработка параметров
                 if(is_array($params)){
                     foreach ($params as $key => $value) {
                         if($value instanceof DateTime){
                             // дата
+//Zend_Debug::dump($this->dtFormat);
                             $value = "'".$value->format($this->dtFormat)."'";
+//Zend_Debug::dump($value);
                         }
                         else{
                             switch (gettype($value)){
@@ -159,6 +144,22 @@ class Smlib_MssqlConn {
                     return FALSE;
                 }
             }
+            // выполняем подготовленный запрос
+//Zend_Debug::dump($sqlQuery);
+            $this->timePrepareSpend = ($this->getMicroTime() - $tstart);
+            $tstart = $this->getMicroTime(); 
+            $query = mssql_query($sqlQuery, $this->pconn);
+            if(!$query){
+                $this->error = "Unable to prepare query: $sqlQuery";
+                return FALSE;
+            }
+            $this->timeQuerySpend = ($this->getMicroTime() - $tstart);
+            $tstart = $this->getMicroTime(); 
+            while($row = mssql_fetch_assoc($query)){
+                $res[] = $row;
+            }
+            $this->timeFetchSpend = ($this->getMicroTime() - $tstart);
+            return $res;
         }
         //Zend_Debug::dump($res);
         return FALSE;
