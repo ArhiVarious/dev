@@ -6,10 +6,10 @@
  *       Zend_Registry::set('dbconn', $dbConfig);
  *  
  * 
- * Описание класса Smlib_Db_MssqlConn
+ * Описание класса Smlib_MssqlConn
  * 
  * Класс реализует функцию getResultQuery, которая принимает параметризированные запросы вида:
- * select :field from :database where :wh1 = :con1
+ * select @field from @database where @wh1 = :con1
  * 
  * вторым параметром задается массив параметров:
  * array(':field'=>'id', ':database'=>'ch_site', ':wh1'=>'id', ':con1'=>$id)
@@ -18,7 +18,7 @@
  *
  * @автор Artem
  */
-class Smlib_Db_MssqlConn {
+class Smlib_MssqlConn {
     // данные
     protected $dbHost;              // хост базы данных
     protected $dbUser;              // пользователь  базы данных
@@ -26,8 +26,8 @@ class Smlib_Db_MssqlConn {
     protected $timePrepareSpend;    // время запроса
     protected $timeQuerySpend;      // время запроса
     protected $timeFetchSpend;      // время запроса
-    protected $db;                  // массив подключений
     protected $pconn;               // подключение к серверу
+    protected $error;               // ошибка работы с БД
     
     // конструктор
     public function __construct($connName = 'default') {
@@ -63,65 +63,71 @@ class Smlib_Db_MssqlConn {
         return $this->timeQuerySpend*1000;
     }
     
+    public function getError(){
+        return $this->error;
+    }
+
+
     protected function getMicroTime(){
         $mtime = explode(" ", microtime()); 
         $res = $mtime[1] + $mtime[0]; 
     }
 
-    // функция возвращает соединение с БД, если оно еще не создано - создает его
     public function getDbConnection($dbName){
-        if($this->db[$dbName] == NULL)
-        {
-            $this->db[$dbName] = Zend_Db::factory('Pdo_Mssql',
-                    array(
-                        'host'      => $this->dbHost,
-                        'username'  => $this->dbUser,
-                        'password'  => $this->dbPass,
-                        'dbname'    => $dbName,
-                        'charset'   => 'UTF-8'
-                    ));
+        if($this->pconn){
+            if(mssql_select_db($dbName, $this->pconn)){
+                return $this->pconn;
+            }
+            else{
+                $this->error = "Unable to select database $dbName";
+                return FALSE;
+            }
         }
-        return $this->db[$dbName];
+        $this->error = "Unable to set connection with host: $$this->dbHost";
+        return FALSE;
     }
 
-    // функция возвращает select для формирования выборки
-    public function getSelect($dbName){
-        return $this->getDbConnection($dbName)->select();
-    }
-    
     // функция выполнения запроса
-    public function getResultQuery($dbName, $sqlQuery, $params = NULL){
+    public function getResultQuery($dbName, $sqlQuery, $params = array()){
                                                             /*
                                                              * $dbName - имя базы данных
                                                              * $sqlQuery - параметризированный запрос вида:
-                                                             *                  select :field from :database where :wh1 = :con1
+                                                             *                  select field from :database where :wh1 = :con1
                                                              * $params - массив параметров для подстановки в запрос:
-                                                             *                  array(':field'=>'id', ':database'=>'ch_site', ':wh1'=>'id', ':con1'=>$id)
+                                                             *                  array(":field'=>'id', ':database'=>'ch_site', ':wh1'=>'id', ':con1'=>$id)
                                                              * 
                                                              * функция возвращает массив результата запроса:
                                                              *                  $res[0]['fieldname']
                                                              * 
                                                              */
         
-        Zend_Debug::dump($sqlQuery);
-        
+        //Zend_Debug::dump($sqlQuery);
+        $this->error = "OK";
         $tstart = $this->getMicroTime(); 
         
-        $this->getDbConnection($dbName);
-        
-        $this->timePrepareSpend = ($this->getMicroTime() - $tstart);
-        $tstart = $this->getMicroTime(); 
-        
-        $stmt = $this->db[$dbName]->query($sqlQuery, $params);
-        
-        $this->timeQuerySpend = ($this->getMicroTime() - $tstart);
-        $tstart = $this->getMicroTime(); 
-        
-        $res = $stmt->fetchAll();
-
-        $this->timeFetchSpend = ($this->getMicroTime() - $tstart);
-        Zend_Debug::dump($res);
-        return $res;
+        if($this->getDbConnection($dbName)){
+            if(empty($params)){
+                $this->timePrepareSpend = ($this->getMicroTime() - $tstart);
+                $tstart = $this->getMicroTime(); 
+                $query = mssql_query($sqlQuery, $this->pconn);
+                if(!$query){
+                    $this->error = "Unable to prepare query: $sqlQuery";
+                    return FALSE;
+                }
+                $this->timeQuerySpend = ($this->getMicroTime() - $tstart);
+                $tstart = $this->getMicroTime(); 
+                while($row = mssql_fetch_assoc($query)){
+                    $res[] = $row;
+                }
+                $this->timeFetchSpend = ($this->getMicroTime() - $tstart);
+                return $res;
+            }
+            else{
+                // обработка параметров
+            }
+        }
+        //Zend_Debug::dump($res);
+        return FALSE;
     }
 }
 
