@@ -5,7 +5,8 @@ class Test_IndexController extends Zend_Controller_Action
 
     public function init()
     {
-        /* Initialize action controller here */
+    $this->_helper->layout->setLayout('test');    
+    
     }
 
     public function indexAction()
@@ -13,15 +14,10 @@ class Test_IndexController extends Zend_Controller_Action
         // action body
         $con = new Smlib_MssqlConn();
         $sql = "
-            select
-                cast(aaa_id as int) as aaa_id,
-                aaa_name
-              from
-                ch_site..aaa with(nolock)
-              where 1=1
-              --id and aaa_id = @aaa_id
-              --view1 and aaa_name like 'А%'
-              --view2 and aaa_name like 'Б%'
+declare @str_cnt int = (select count(*) from ch_d_1..aaa);
+select @str_cnt as str_cnt, * from (
+select row_number() over (order by aaa_name asc) as str_num, * from ch_d_1..aaa
+) t where str_num between 1 and 100 order by str_num
                 ";
         $res = $con->getResultQuery('ch_d_1', $sql);
         if(!$res){
