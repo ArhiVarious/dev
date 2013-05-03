@@ -1,23 +1,33 @@
 <br /><br />
-<div id="view-content" style="position: absolute; top: 50px; left: 100px; width: 400px; overflow: auto;">
-    <div id="test_tbedit">
+<script>
+    function scroll_main(){
+        var scrolled = document.getElementById('test_tbedit').scrollLeft;
+        document.getElementById('test_head').scrollLeft = scrolled;
+    }
+</script>
+<div id="view-content">
+        <div>
         <?= $this->tbEdit->getTableTitle() ?>
+        </div>
+    <div id="test_head"  style="max-width: 600px; overflow-x: hidden; overflow-y: hidden;">
         <table border="1px" cellpadding="5px" cellspacing="0px">
             <thead>
                 <?foreach($this->tbEdit->getFields() as $field) if($field['isVisible']=='1'):?>
-                <?='<th width="'.$field['width'].'">'?>
+                <?='<th style="min-width:'.$field['width'].';">'?>
                     <?=$field['title']?>
                 </th>
                 <?endif;?>
             </thead>
         </table>
-        <div id="test_tbody" style="width:600px; height:500px; overflow-x: auto; overflow-y: auto;">
-            <table border="1px" cellpadding="5px" cellspacing="0px">
+    </div>
+    <div id="test_tbedit"  style="max-width: 600px; height:500px; overflow-x: auto; overflow-y: auto;" onscroll="scroll_main();">
+            <table cellpadding="5px" cellspacing="0px">
                 <tbody>
                     <?foreach($this->tbEdit->getTableData(1) as $row):?>
                     <tr>
+                        <?$this->recCount = $row['str_cnt'];?>
                         <?foreach($this->tbEdit->getFields() as $field) if($field['isVisible']=='1'):?>
-                        <?='<td width="'.$field['width'].'">'?>
+                        <?='<td style="border-bottom: 1px solid black; min-width:'.$field['width'].';">'?>
                             <?=$row[$field['name']]?>
                         </td>
                         <?endif;?>
@@ -25,6 +35,14 @@
                     <?endforeach;?>
                 </tbody>
             </table>
-        </div>
+    </div>
+    <div id="test_foot"  style="max-width: 600px; overflow-x: hidden; overflow-y: hidden;">
+        <table cellpadding="5px" cellspacing="0px">
+            <thead>
+                <th>
+                    <?='Всего записей - '.$this->recCount?>
+                </th>
+            </thead>
+        </table>
     </div>
 </div>
