@@ -6,26 +6,13 @@
         <meta name="viewport" content="width=1024px, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-        <?=
-                $this->headTitle('СправМедика', Zend_View_Helper_Placeholder_Container_Abstract::PREPEND)
-                ->setSeparator(' ')
-        ?>
-
-        <!-- Stylesheets -->
-
-        <!--[if lt IE 9]>
-            <script src="/spina/js/html5shiv.js"></script>
-            <script src="/spina/js/excanvas.js"></script>
-        <![endif]-->
         <meta charset="UTF-8"></head>
 
     <body>
         
-        <section id="maincontainer">
-            <div id="main">
+            <div>
                 <?=$this->layout()->content ?> 
             </div>
-        </section>
         <!-- JavaScript -->
     </body>
 </html>

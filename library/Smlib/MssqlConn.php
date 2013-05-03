@@ -155,8 +155,13 @@ class Smlib_MssqlConn {
             }
             $this->timeQuerySpend = ($this->getMicroTime() - $tstart);
             $tstart = $this->getMicroTime(); 
-            while($row = mssql_fetch_assoc($query)){
-                $res[] = $row;
+            if(gettype($query)!='boolean'){
+                while($row = mssql_fetch_assoc($query)){
+                    $res[] = $row;
+                }
+            }
+            else{
+                $res[]=NULL;
             }
             $this->timeFetchSpend = ($this->getMicroTime() - $tstart);
             return $res;

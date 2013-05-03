@@ -1,26 +1,30 @@
 <br /><br />
-<div id="view-content">
+<div id="view-content" style="position: absolute; top: 50px; left: 100px; width: 400px; overflow: auto;">
     <div id="test_tbedit">
         <?= $this->tbEdit->getTableTitle() ?>
-        <table border="1px">
+        <table border="1px" cellpadding="5px" cellspacing="0px">
             <thead>
-                <?foreach($this->tbEdit->getFields() as $field) if($field['isVisible']='1'):?>
-                <th>
+                <?foreach($this->tbEdit->getFields() as $field) if($field['isVisible']=='1'):?>
+                <?='<th width="'.$field['width'].'">'?>
                     <?=$field['title']?>
                 </th>
                 <?endif;?>
             </thead>
-            <tbody>
-                <?foreach($this->tbEdit->getTableData(1) as $row):?>
-                <tr>
-                    <?foreach($this->tbEdit->getFields() as $field) if($field['isVisible']='1'):?>
-                    <td>
-                        <?=$row[$field['name']]?>
-                    </td>
-                    <?endif;?>
-                </tr>
-                <?endforeach;?>
-            </tbody>
         </table>
+        <div id="test_tbody" style="width:600px; height:500px; overflow-x: auto; overflow-y: auto;">
+            <table border="1px" cellpadding="5px" cellspacing="0px">
+                <tbody>
+                    <?foreach($this->tbEdit->getTableData(1) as $row):?>
+                    <tr>
+                        <?foreach($this->tbEdit->getFields() as $field) if($field['isVisible']=='1'):?>
+                        <?='<td width="'.$field['width'].'">'?>
+                            <?=$row[$field['name']]?>
+                        </td>
+                        <?endif;?>
+                    </tr>
+                    <?endforeach;?>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>

@@ -38,7 +38,7 @@ class Smlib_TbEdit {
      * $tbTitle - имя таблицы для отображения
      */
     public function __construct($elName, $dbName, $fieldsDescription, $idFieldName, $queryDesc, $order, $tbTitle = NULL, $connName = 'default', $recPerPage = 100) {
-        $this->dbConn = new Smlib_Db_MssqlConn($connName);
+        $this->dbConn = new Smlib_MssqlConn($connName);
         $this->dbName = $dbName;
         $this->elName = $elName;
         $this->idFieldName = $idFieldName;
@@ -46,7 +46,7 @@ class Smlib_TbEdit {
         $this->sqlQueries = $queryDesc;
         $this->tbTitle = $tbTitle;
         $this->recPerPage = $recPerPage;
-        $this->uid = str_replace('-', '_' , $this->dbConn->getResultQuery($this->dbName, 'select newid() as newuid')[0]['newuid']);
+        $this->uid = str_replace('-', '_' , $this->dbConn->getResultQuery($this->dbName, 'select convert(nvarchar(50), newid()) as newuid')[0]['newuid']);
         $this->order = $order;
         $sqlTemp = str_replace('@uid@', $this->uid, $this->sqlQueries['select']);
         $sqlTemp = str_replace('--into', '', $sqlTemp);
@@ -70,8 +70,10 @@ class Smlib_TbEdit {
             select row_number() over (order by @order@) as str_num, * from ch_temp..xxx_temp_@uid@
             ) t where str_num between @recFirst@ and @recLast@ order by str_num
             ";
+//Zend_Debug::dump($this->uid);        
         $sqlTemp = str_replace('@uid@', $this->uid, $sqlTemp);
         $sqlTemp = str_replace('@order@', implode(', ', $this->order), $sqlTemp);
+//Zend_Debug::dump($sqlTemp);      
         return $this->dbConn->getResultQuery($this->dbName, $sqlTemp, array('@recFirst@'=>$recFirst, '@recLast@'=>$recLast));
     }
     

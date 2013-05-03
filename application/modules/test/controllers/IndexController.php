@@ -27,7 +27,7 @@ select row_number() over (order by aaa_name asc) as str_num, * from ch_d_1..aaa
             Zend_Debug::dump($con->getError());
         }
         else{
-            Zend_Debug::dump($res);
+           Zend_Debug::dump($res);
         }
     }
 
@@ -43,14 +43,16 @@ select row_number() over (order by aaa_name asc) as str_num, * from ch_d_1..aaa
                         'isVisible' => '1',
                         'isNeeded' => '1',
                         'isNull' => '0',
-                        'isReadOnly' => '0'),
-                    array('name' => 'aaa',
+                        'isReadOnly' => '0',
+                        'width' => '50px'),
+                    array('name' => 'aaa_name',
                         'title' => 'Название',
                         'type' => 'string',
                         'isVisible' => '1',
                         'isNeeded' => '1',
                         'isNull' => '0',
-                        'isReadOnly' => '0')
+                        'isReadOnly' => '0',
+                        'width' => '500px')
                     ),
                 'aaa_id',
                 array('select' => 'select
