@@ -1,0 +1,26 @@
+<br /><br />
+<div id="view-content">
+    <div id="test_tbedit">
+        <?= $this->tbEdit->getTableTitle() ?>
+        <table border="1px">
+            <thead>
+                <?foreach($this->tbEdit->getFields() as $field) if($field['isVisible']='1'):?>
+                <th>
+                    <?=$field['title']?>
+                </th>
+                <?endif;?>
+            </thead>
+            <tbody>
+                <?foreach($this->tbEdit->getTableData(1) as $row):?>
+                <tr>
+                    <?foreach($this->tbEdit->getFields() as $field) if($field['isVisible']='1'):?>
+                    <td>
+                        <?=$row[$field['name']]?>
+                    </td>
+                    <?endif;?>
+                </tr>
+                <?endforeach;?>
+            </tbody>
+        </table>
+    </div>
+</div>

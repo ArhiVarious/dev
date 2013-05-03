@@ -26,17 +26,21 @@ class Smlib_TbEdit {
     protected $uid;         // uid временной таблицы
     protected $order;       // сортировка
     protected $recPerPage;  // количество записей на страницу
+    protected $elName;      // имя-префикс вставляемого блока
     
     /* конструктор, принимаемые параметры:
+     * $elName - имя-префикс вставляемого блока
      * $dbName - имя базы данных
      * $fieldsDescription - массив описания полей
      * $idFieldName - имя поля, содержащего id
      * $sqlQueryDesc - sql-запрос на получение информации об sql-запросах на выборку, вставку, обновление, удаление
+     * $order - массив порядка сортировки
      * $tbTitle - имя таблицы для отображения
      */
-    public function __construct($dbName, $fieldsDescription, $idFieldName, $queryDesc, $order, $tbTitle = NULL, $connName = 'default', $recPerPage = 100) {
+    public function __construct($elName, $dbName, $fieldsDescription, $idFieldName, $queryDesc, $order, $tbTitle = NULL, $connName = 'default', $recPerPage = 100) {
         $this->dbConn = new Smlib_Db_MssqlConn($connName);
         $this->dbName = $dbName;
+        $this->elName = $elName;
         $this->idFieldName = $idFieldName;
         $this->fieldsDesc = $fieldsDescription;
         $this->sqlQueries = $queryDesc;
@@ -44,16 +48,11 @@ class Smlib_TbEdit {
         $this->recPerPage = $recPerPage;
         $this->uid = str_replace('-', '_' , $this->dbConn->getResultQuery($this->dbName, 'select newid() as newuid')[0]['newuid']);
         $this->order = $order;
-    }
-    
-    public function prepareTable(){
-        //Zend_Debug::dump($this->uid);
-        $sqlTemp = str_replace('@uid', $this->uid, $this->sqlQueries['select']);
+        $sqlTemp = str_replace('@uid@', $this->uid, $this->sqlQueries['select']);
         $sqlTemp = str_replace('--into', '', $sqlTemp);
         $this->dbConn->getResultQuery($this->dbName, $sqlTemp);
     }
-
-
+    
     public function getTableTitle(){
         return $this->tbTitle;
     }
@@ -65,24 +64,25 @@ class Smlib_TbEdit {
         else{
             $recLast = $recFirst + $this->recPerPage;
         }
-        $sqlTemp = "declare @str_cnt int = (select count(*) from ch_temp..xxx_temp_@uid)";
-        $sqlTemp = str_replace('@uid', $this->uid, $sqlTemp);
-        $str_cnt = $this->dbConn->getResultQuery($this->dbName, $sqlTemp);
         $sqlTemp = "
-            select :str_cnt as str_cnt, * from (
-            select row_number() over (order by @order) as str_num, * from ch_temp..xxx_temp_@uid
-            ) t where str_num between $recFirst and $recLast order by str_num
+            declare @str_cnt int = (select count(*) from ch_temp..xxx_temp_@uid@);
+            select @str_cnt as str_cnt, * from (
+            select row_number() over (order by @order@) as str_num, * from ch_temp..xxx_temp_@uid@
+            ) t where str_num between @recFirst@ and @recLast@ order by str_num
             ";
-        $sqlTemp = str_replace('@uid', $this->uid, $sqlTemp);
-        $sqlTemp = str_replace('@order', implode(', ', $this->order), $sqlTemp);
-        $params = array(':str_cnt'=>$str_cnt);
-        return $this->dbConn->getResultQuery($this->dbName, $sqlTemp, $params);
+        $sqlTemp = str_replace('@uid@', $this->uid, $sqlTemp);
+        $sqlTemp = str_replace('@order@', implode(', ', $this->order), $sqlTemp);
+        return $this->dbConn->getResultQuery($this->dbName, $sqlTemp, array('@recFirst@'=>$recFirst, '@recLast@'=>$recLast));
     }
     
     public function getFields(){
         return $this->fieldsDesc;
     }
     
+    public function getElName(){
+        return $this->elName;
+    }
+            
     function __destruct(){
         //$sql = "drop table ch_temp..xxx_temp_@uid";
         //$sql = str_replace('@uid', $uid, $sql);
