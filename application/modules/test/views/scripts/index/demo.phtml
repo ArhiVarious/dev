@@ -1,8 +1,11 @@
 <br /><br />
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+<script>!window.jQuery && document.write('<script src="//yandex.st/jquery/1.9.0/jquery.min.js"><\/script>')</script>
+<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.0/jquery-ui.min.js"></script>
+<script>!window.jQuery.datepicker && document.write('<script src="//yandex.st/jquery-ui/1.10.0/jquery-ui.min.js"><\/script>')</script>
 <script>
     function scroll_main(){
-        var scrolled = document.getElementById('test_tbedit').scrollLeft;
-        document.getElementById('test_head').scrollLeft = scrolled;
+        $('#test_head').scrollLeft($('#test_tbedit').scrollLeft());
     }
 </script>
 <div id="view-content">
@@ -20,7 +23,7 @@
             </thead>
         </table>
     </div>
-    <div id="test_tbedit"  style="max-width: 600px; height:500px; overflow-x: auto; overflow-y: auto;" onscroll="scroll_main();">
+    <div id="test_tbedit"  style="max-width: 600px; height:500px; overflow-x: auto; overflow-y: auto;" onscroll="scroll_main()">
             <table cellpadding="5px" cellspacing="0px">
                 <tbody>
                     <?foreach($this->tbEdit->getTableData(1) as $row):?>
