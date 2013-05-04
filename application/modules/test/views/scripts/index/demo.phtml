@@ -5,7 +5,9 @@
 <script>!window.jQuery.datepicker && document.write('<script src="//yandex.st/jquery-ui/1.10.0/jquery-ui.min.js"><\/script>')</script>
 <script>
     function scroll_main(){
-        $('#test_head').scrollLeft($('#test_tbedit').scrollLeft());
+        var $tbedit = $('#test_tbedit');
+        $('#test_head').scrollLeft($tbedit.scrollLeft());
+        var $h = $tbedit.height();
     }
 </script>
 <div id="view-content">
