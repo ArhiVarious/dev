@@ -33,7 +33,8 @@ select row_number() over (order by aaa_name asc) as str_num, * from ch_d_1..aaa
 
     public function demoAction()
     {
-        $tbEdit = new Smlib_TbEdit(
+        $tbEdit = new Smlib_TbEdit();
+        $tbEdit->initData(
                 'test',
                 'ch_d_1',
                 array(
@@ -71,8 +72,7 @@ select row_number() over (order by aaa_name asc) as str_num, * from ch_d_1..aaa
                 array('aaa_name asc'),
                 'Тестовая таблица'
                 );
-                Zend_Registry::set('test_tbEdit', $tbEdit);
-        //$this->view->tbEdit = $tbEdit;
+        $this->view->tbEdit = $tbEdit;
     }
 
 

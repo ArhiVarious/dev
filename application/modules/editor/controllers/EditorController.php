@@ -9,25 +9,18 @@ class Editor_EditorController extends Zend_Controller_Action
 
     public function indexAction()
     {
+        $tbEdit = new Smlib_TbEdit();
         $params = $this->getAllParams();
-//Zend_Debug::dump($params);        
-        if(!isset($params['name'])){
-            die('Не задано имя элемента');
-        }
-        $tbEdit = Zend_Registry::get($params['name'].'_tbEdit');
+        $tbEdit->initFromBase($params['elName'], $params['uid'], $params['connName']);
         $this->view->tbEdit = $tbEdit;
     }
 
     public function addAction()
     {
+        $tbEdit = new Smlib_TbEdit();
         $params = $this->getAllParams();
-Zend_Debug::dump($params);
-        if(!isset($params['name'])){
-            die('Не задано имя элемента');
-        }
-        die('erwer');
-        //$tbEdit = Zend_Registry::get($params['name'].'_tbEdit');
-        //$this->view->tbEdit = $tbEdit;
+        $tbEdit->initFromBase($params['elName'], $params['uid'], $params['connName']);
+        $this->view->tbEdit = $tbEdit;
     }
 
 

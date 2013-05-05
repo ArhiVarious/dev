@@ -1,4 +1,4 @@
 <div>
     <p>Demo view</p>
-    <?= $this->action('index', 'editor', 'editor', array('name' => 'test'))?>
+    <?= $this->action('index', 'editor', 'editor', array('elName' => 'test', 'uid' => $this->tbEdit->getUID(), 'connName' => $this->tbEdit->getConnName()))?>
 </div>

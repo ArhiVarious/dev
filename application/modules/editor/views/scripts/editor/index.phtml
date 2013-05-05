@@ -8,24 +8,20 @@
         $('#<?=$this->tbEdit->getElName()?>_head').scrollLeft($tbedit.scrollLeft());
         var $h = $tbedit.height();
         var $ht = $('#<?=$this->tbEdit->getElName()?>_tbedit_table').height();
-        if(($tbedit.scrollTop()+$h)>($ht*0.8)){
-//            $('#<?//=$this->tbEdit->getElName()?>_tbedit_table').empty();
-            var $name = '<?=$this->tbEdit->getElName()?>';
-            var $tbEdit = <?=$this->tbEdit?>
+        if(($tbedit.scrollTop()+$h)>($ht*0.8) && $('#<?=$this->tbEdit->getElName()?>_tbedit tr').size()<<?=$this->tbEdit->getRecsTotal()?>){
             $.ajax({
                  type:"POST",
                  url:"<?=$this->url(array('module'=>'editor','controller'=>'editor','action'=>'add'))?>",
-                 data: {"uid":"<?=$this->tbEdit->get?>"},
+                 data: {"elName":"<?=$this->tbEdit->getElName()?>", "uid":"<?=$this->tbEdit->getUID()?>", "connName":"<?=$this->tbEdit->getConnName()?>"},
                  success: function(responce){ 
-                      //Загружаем результат в блок с id=result_div и прячем картинку загрузки
-                      $('#<?=$this->tbEdit->getElName()?>_tbedit_table').html(responce);
-                      //alert(response);
+                      var oldhtml = $('#<?=$this->tbEdit->getElName()?>_tbedit_table tbody').html();
+                      $('#<?=$this->tbEdit->getElName()?>_tbedit_table tbody').html(oldhtml+responce);
                      // $('div#download_img').css('display', 'none');
                  },
-      error: function (xhr, ajaxOptions, thrownError) {
-        alert(xhr.status);
-        alert(thrownError);
-      }
+                error: function (xhr, ajaxOptions, thrownError) {
+                  alert(xhr.status);
+                  alert(thrownError);
+                }
              });
         }
     }
@@ -64,7 +60,7 @@
         <table cellpadding="5px" cellspacing="0px">
             <thead>
                 <th>
-                    <?='Всего записей - '.$this->recCount?>
+                    <?='Всего записей - '.$this->tbEdit->getRecsTotal()?>
                 </th>
             </thead>
         </table>

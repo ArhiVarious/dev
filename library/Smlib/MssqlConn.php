@@ -23,6 +23,7 @@ class Smlib_MssqlConn {
     protected $dbHost;              // хост базы данных
     protected $dbUser;              // пользователь  базы данных
     protected $dbPass;              // пароль пользователя
+    protected $connName;            // имя соединения
     protected $timePrepareSpend;    // время запроса
     protected $timeQuerySpend;      // время запроса
     protected $timeFetchSpend;      // время запроса
@@ -33,6 +34,7 @@ class Smlib_MssqlConn {
     // конструктор
     public function __construct($connName = 'default') {
         $dbConfig = Zend_Registry::get('dbconn');
+        $this->connName = $connName;
         $this->dbHost = $dbConfig[$connName]['host'];
         $this->dbUser = $dbConfig[$connName]['user'];
         $this->dbPass = $dbConfig[$connName]['pass'];
@@ -51,6 +53,10 @@ class Smlib_MssqlConn {
 
     public function getPass(){
         return $this->dbPass;
+    }
+    
+    public function getConnName(){
+        return $this->connName;
     }
 
     public function getTimeFetchSpend(){
