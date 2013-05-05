@@ -71,7 +71,8 @@ select row_number() over (order by aaa_name asc) as str_num, * from ch_d_1..aaa
                 array('aaa_name asc'),
                 'Тестовая таблица'
                 );
-        $this->view->tbEdit = $tbEdit;
+                Zend_Registry::set('test_tbEdit', $tbEdit);
+        //$this->view->tbEdit = $tbEdit;
     }
 
 

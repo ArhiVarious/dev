@@ -1,0 +1,72 @@
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+<script>!window.jQuery && document.write('<script src="//yandex.st/jquery/1.9.0/jquery.min.js"><\/script>')</script>
+<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.0/jquery-ui.min.js"></script>
+<script>!window.jQuery.datepicker && document.write('<script src="//yandex.st/jquery-ui/1.10.0/jquery-ui.min.js"><\/script>')</script>
+<script>
+    function <?=$this->tbEdit->getElName()?>_scroll_main(){
+        var $tbedit = $('#<?=$this->tbEdit->getElName()?>_tbedit');
+        $('#<?=$this->tbEdit->getElName()?>_head').scrollLeft($tbedit.scrollLeft());
+        var $h = $tbedit.height();
+        var $ht = $('#<?=$this->tbEdit->getElName()?>_tbedit_table').height();
+        if(($tbedit.scrollTop()+$h)>($ht*0.8)){
+//            $('#<?//=$this->tbEdit->getElName()?>_tbedit_table').empty();
+            var $name = '<?=$this->tbEdit->getElName()?>';
+            var $tbEdit = <?=$this->tbEdit?>
+            $.ajax({
+                 type:"POST",
+                 url:"<?=$this->url(array('module'=>'editor','controller'=>'editor','action'=>'add'))?>",
+                 data: {"uid":"<?=$this->tbEdit->get?>"},
+                 success: function(responce){ 
+                      //Загружаем результат в блок с id=result_div и прячем картинку загрузки
+                      $('#<?=$this->tbEdit->getElName()?>_tbedit_table').html(responce);
+                      //alert(response);
+                     // $('div#download_img').css('display', 'none');
+                 },
+      error: function (xhr, ajaxOptions, thrownError) {
+        alert(xhr.status);
+        alert(thrownError);
+      }
+             });
+        }
+    }
+</script>
+<div id="view-content">
+        <div>
+        <?= $this->tbEdit->getTableTitle() ?>
+        </div>
+    <div id="<?=$this->tbEdit->getElName()?>_head"  style="max-width: 600px; overflow-x: hidden; overflow-y: hidden;">
+        <table border="1px" cellpadding="5px" cellspacing="0px">
+            <thead>
+                <?foreach($this->tbEdit->getFields() as $field) if($field['isVisible']=='1'):?>
+                <?='<th style="min-width:'.$field['width'].';">'?>
+                    <?=$field['title']?>
+                </th>
+                <?endif;?>
+            </thead>
+        </table>
+    </div>
+    <div id="<?=$this->tbEdit->getElName()?>_tbedit"  style="max-width: 600px; height:500px; overflow-x: auto; overflow-y: auto;" onscroll="<?=$this->tbEdit->getElName()?>_scroll_main()">
+            <table id="test_tbedit_table" cellpadding="5px" cellspacing="0px">
+                <tbody>
+                    <?foreach($this->tbEdit->getTableData() as $row):?>
+                    <tr>
+                        <?foreach($this->tbEdit->getFields() as $field) if($field['isVisible']=='1'):?>
+                        <?='<td style="border-bottom: 1px solid black; min-width:'.$field['width'].';">'?>
+                            <?=$row[$field['name']]?>
+                        </td>
+                        <?endif;?>
+                    </tr>
+                    <?endforeach;?>
+                </tbody>
+            </table>
+    </div>
+    <div id="<?=$this->tbEdit->getElName()?>_foot"  style="max-width: 600px; overflow-x: hidden; overflow-y: hidden;">
+        <table cellpadding="5px" cellspacing="0px">
+            <thead>
+                <th>
+                    <?='Всего записей - '.$this->recCount?>
+                </th>
+            </thead>
+        </table>
+    </div>
+</div>
