@@ -109,7 +109,7 @@ class Smlib_MssqlConn {
                                                              * 
                                                              */
         
-        //Zend_Debug::dump($sqlQuery);
+//Zend_Debug::dump($sqlQuery);
         $this->error = "OK";
         $tstart = $this->getMicroTime(); 
         

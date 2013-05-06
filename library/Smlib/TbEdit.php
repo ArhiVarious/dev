@@ -53,11 +53,17 @@ class Smlib_TbEdit {
         $this->sqlQueries = $queryDesc;
         $this->tbTitle = $tbTitle;
         $this->recPerPage = $recPerPage;
-        $this->uid = str_replace('-', '_' , $this->dbConn->getResultQuery($this->dbName, 'select convert(nvarchar(50), newid()) as newuid')[0]['newuid']);
+        $res = $this->dbConn->getResultQuery($this->dbName, 'select convert(nvarchar(50), newid()) as newuid');
+        $this->uid = str_replace('-', '_' , $res[0]['newuid']);
         $this->order = $order;
+        $this->prepareOrderArray();
+//Zend_Debug::dump($this->order);      
         $sqlTemp = str_replace('@uid@', $this->uid, $this->sqlQueries['select']);
         $sqlTemp = str_replace('--into', '', $sqlTemp);
         $this->dbConn->getResultQuery($this->dbName, $sqlTemp);
+        $sqlTemp = "select count(*) as str_cnt from ch_temp..xxx_temp_@uid@";
+        $sqlTemp = str_replace('@uid@', $this->uid, $sqlTemp);
+        $this->recsTotal = $this->dbConn->getResultQuery($this->dbName, $sqlTemp)[0][str_cnt];
         $this->curPage = 0;
         $this->createTables();
     }
@@ -66,6 +72,7 @@ class Smlib_TbEdit {
         $this->dbConn = new Smlib_MssqlConn($connName);
         $this->uid = $uid;
         $this->elName = $elName;
+        $this->connName = $connName;
         $sql = '
             select * from ch_temp..xxx_temp_params_'.$this->elName.'_@uid@
             ';
@@ -86,6 +93,21 @@ class Smlib_TbEdit {
         $sql = 'select * from ch_temp..xxx_temp_order_'.$this->elName.'_@uid@';
         $sql = str_replace('@uid@', $this->uid, $sql);
         $this->order = $this->dbConn->getResultQuery('ch_temp', $sql);
+        $this->prepareOrderArray();
+        $sqlTemp = "select count(*) as str_cnt from ch_temp..xxx_temp_@uid@";
+        $sqlTemp = str_replace('@uid@', $this->uid, $sqlTemp);
+        $this->recsTotal = $this->dbConn->getResultQuery($this->dbName, $sqlTemp)[0][str_cnt];
+//Zend_Debug::dump($this->order);      
+    }
+    
+    protected function prepareOrderArray(){
+        if(is_array($this->order[0])){
+            $neworder = array();
+            foreach($this->order as $order){
+                $neworder[] = $order['order'];
+            }
+            $this->order = $neworder;
+        }
     }
 
     protected function createTables(){
@@ -99,7 +121,7 @@ class Smlib_TbEdit {
             curPage int)';
         $sql = str_replace('@uid@', $this->uid, $sql);
         $this->dbConn->getResultQuery($this->dbName, $sql);
-        $sql = "insert into ch_temp..xxx_temp_params_'.$this->elName.'_@uid@
+        $sql = "insert into ch_temp..xxx_temp_params_".$this->elName."_@uid@
             (dbName,
             elName,
             idFieldName,
@@ -108,8 +130,7 @@ class Smlib_TbEdit {
             uid,
             curPage)
             values
-                ('".$this->dbConn->getConnName()."',
-                '$this->dbName',
+                ('$this->dbName',
                 '$this->elName',
                 '$this->idFieldName',
                 '$this->tbTitle',
@@ -130,7 +151,7 @@ class Smlib_TbEdit {
         $sql = str_replace('@uid@', $this->uid, $sql);
         $this->dbConn->getResultQuery($this->dbName, $sql);
         foreach($this->fieldsDesc as $field){
-            $sql = "insert into ch_temp..xxx_temp_fields_'.$this->elName.'_@uid@
+            $sql = "insert into ch_temp..xxx_temp_fields_".$this->elName."_@uid@
                 (name,
                 title,
                 type,
@@ -152,18 +173,17 @@ class Smlib_TbEdit {
             $this->dbConn->getResultQuery($this->dbName, $sql);
         }
         $sql = 'create table ch_temp..xxx_temp_queries_'.$this->elName.'_@uid@
-            (select varchar(1024),
-            insert varchar(1024),
-            update varchar(1024),
-            delete varchar(1024),
-            uid varchar(255))';
+            ([select] varchar(1024),
+            [insert] varchar(1024),
+            [update] varchar(1024),
+            [delete] varchar(1024))';
         $sql = str_replace('@uid@', $this->uid, $sql);
         $this->dbConn->getResultQuery($this->dbName, $sql);
-        $sql = "insert into ch_temp..xxx_temp_queries_'.$this->elName.'_@uid@
-            (select,
-            insert,
-            update,
-            delete)
+        $sql = "insert into ch_temp..xxx_temp_queries_".$this->elName."_@uid@
+            ([select],
+            [insert],
+            [update],
+            [delete])
             values
             ('".$this->sqlQueries['select']."',
             '".$this->sqlQueries['insert']."',
@@ -172,21 +192,21 @@ class Smlib_TbEdit {
         $sql = str_replace('@uid@', $this->uid, $sql);
         $this->dbConn->getResultQuery($this->dbName, $sql);
         $sql = 'create table ch_temp..xxx_temp_order_'.$this->elName.'_@uid@
-            (order varchar(255))';
+            ([order] varchar(255))';
         $sql = str_replace('@uid@', $this->uid, $sql);
         $this->dbConn->getResultQuery($this->dbName, $sql);
         foreach($this->order as $field){
-            $sql = "insert into ch_temp..xxx_temp_order_'.$this->elName.'_@uid@
-                (order)
+            $sql = "insert into ch_temp..xxx_temp_order_".$this->elName."_@uid@
+                ([order])
                 values
-                ('".$field['order']."')";
+                ('".$field."')";
             $sql = str_replace('@uid@', $this->uid, $sql);
             $this->dbConn->getResultQuery($this->dbName, $sql);
         }
     }
     
     protected function updateTableData(){
-        $sql = "update ch_temp..xxx_temp_params_'.$this->elName.'_@uid@
+        $sql = "update ch_temp..xxx_temp_params_".$this->elName."_@uid@
             set
             dbName = '$this->dbName',
             elName = '$this->elName',
@@ -196,7 +216,6 @@ class Smlib_TbEdit {
             uid = '$this->uid',
             curPage = $this->curPage
             where
-            values
             uid = '$this->uid'";
         $sql = str_replace('@uid@', $this->uid, $sql);
         $this->dbConn->getResultQuery($this->dbName, $sql);
@@ -213,11 +232,8 @@ class Smlib_TbEdit {
     public function getTableData(){
         $recFirst = $this->curPage*$this->recPerPage + 1;
         $recLast = $recFirst + $this->recPerPage - 1;
-        $sqlTemp = "select count(*) as str_cnt from ch_temp..xxx_temp_@uid@";
-        $sqlTemp = str_replace('@uid@', $this->uid, $sqlTemp);
-        $this->recsTotal = $this->dbConn->getResultQuery($this->dbName, $sqlTemp)[0][str_cnt];
 //Zend_Debug::dump($this->recsTotal);      
-        if(($this->curPage*$this->recPerPage+1) > $this->recsTotal){
+        if(($recFirst) > $this->recsTotal){
             return NULL;
         }
         $this->curPage++;
@@ -228,7 +244,7 @@ class Smlib_TbEdit {
             ";
         $sqlTemp = str_replace('@uid@', $this->uid, $sqlTemp);
         $sqlTemp = str_replace('@order@', implode(', ', $this->order), $sqlTemp);
-//Zend_Debug::dump($sqlTemp);      
+//Zend_Debug::dump($this->order);      
         $this->updateTableData();
         return $this->dbConn->getResultQuery($this->dbName, $sqlTemp, array('@str_cnt@' => $this->recsTotal, '@recFirst@'=>$recFirst, '@recLast@'=>$recLast));
     }

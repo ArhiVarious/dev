@@ -17,6 +17,7 @@ class Editor_EditorController extends Zend_Controller_Action
 
     public function addAction()
     {
+        $this->_helper->layout->disableLayout();
         $tbEdit = new Smlib_TbEdit();
         $params = $this->getAllParams();
         $tbEdit->initFromBase($params['elName'], $params['uid'], $params['connName']);

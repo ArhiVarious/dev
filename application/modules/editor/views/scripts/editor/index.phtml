@@ -3,26 +3,30 @@
 <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.0/jquery-ui.min.js"></script>
 <script>!window.jQuery.datepicker && document.write('<script src="//yandex.st/jquery-ui/1.10.0/jquery-ui.min.js"><\/script>')</script>
 <script>
+    var isLoading = false;
     function <?=$this->tbEdit->getElName()?>_scroll_main(){
         var $tbedit = $('#<?=$this->tbEdit->getElName()?>_tbedit');
         $('#<?=$this->tbEdit->getElName()?>_head').scrollLeft($tbedit.scrollLeft());
         var $h = $tbedit.height();
         var $ht = $('#<?=$this->tbEdit->getElName()?>_tbedit_table').height();
-        if(($tbedit.scrollTop()+$h)>($ht*0.8) && $('#<?=$this->tbEdit->getElName()?>_tbedit tr').size()<<?=$this->tbEdit->getRecsTotal()?>){
+        if(!isLoading && ($tbedit.scrollTop()+$h)>($ht*0.8) && $('#<?=$this->tbEdit->getElName()?>_tbedit tr').size()<<?=$this->tbEdit->getRecsTotal()?>){
+            isLoading = true;
+            $('#<?=$this->tbEdit->getElName()?>_loading_msg').css('display', 'block');
             $.ajax({
-                 type:"POST",
-                 url:"<?=$this->url(array('module'=>'editor','controller'=>'editor','action'=>'add'))?>",
-                 data: {"elName":"<?=$this->tbEdit->getElName()?>", "uid":"<?=$this->tbEdit->getUID()?>", "connName":"<?=$this->tbEdit->getConnName()?>"},
-                 success: function(responce){ 
-                      var oldhtml = $('#<?=$this->tbEdit->getElName()?>_tbedit_table tbody').html();
-                      $('#<?=$this->tbEdit->getElName()?>_tbedit_table tbody').html(oldhtml+responce);
-                     // $('div#download_img').css('display', 'none');
-                 },
+                type:"POST",
+                url:"<?=$this->url(array('module'=>'editor','controller'=>'editor','action'=>'add'))?>",
+                data: {"elName":"<?=$this->tbEdit->getElName()?>", "uid":"<?=$this->tbEdit->getUID()?>", "connName":"<?=$this->tbEdit->getConnName()?>"},
+                success: function(responce){ 
+                     var oldhtml = $('#<?=$this->tbEdit->getElName()?>_tbedit_table tbody').html();
+                     $('#<?=$this->tbEdit->getElName()?>_tbedit_table tbody').html(oldhtml+responce);
+                     isLoading = false;
+                     $('#<?=$this->tbEdit->getElName()?>_loading_msg').css('display', 'none');
+                },
                 error: function (xhr, ajaxOptions, thrownError) {
                   alert(xhr.status);
-                  alert(thrownError);
+                  alert(thrownError);        
                 }
-             });
+            })
         }
     }
 </script>
@@ -64,5 +68,8 @@
                 </th>
             </thead>
         </table>
+        <div id="<?=$this->tbEdit->getElName()?>_loading_msg" style="display: none;">
+            Загрузка данных...
+        </div>
     </div>
 </div>

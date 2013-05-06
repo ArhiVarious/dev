@@ -41,7 +41,7 @@ select row_number() over (order by aaa_name asc) as str_num, * from ch_d_1..aaa
                     array('name' => 'aaa_id',
                         'title' => 'ИД',
                         'type' => 'integer',
-                        'isVisible' => '1',
+                        'isVisible' => '0',
                         'isNeeded' => '1',
                         'isNull' => '0',
                         'isReadOnly' => '0',
@@ -70,7 +70,9 @@ select row_number() over (order by aaa_name asc) as str_num, * from ch_d_1..aaa
                     'update'=>'update aaa set aaa_name = @aaa_name where aaa_id = @aaa_id@',
                     'delete'=>'delete from aaa aaa_id = @aaa_id@'),
                 array('aaa_name asc'),
-                'Тестовая таблица'
+                'Тестовая таблица',
+                'default',
+                50
                 );
         $this->view->tbEdit = $tbEdit;
     }

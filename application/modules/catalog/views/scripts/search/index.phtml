@@ -16,29 +16,6 @@
     </ul>
 </div>
 <div class="yandex_direct in_search_result"><?=$this->yandex_direct?></div>
-<div><?=$this->t->getTableTitle()?></div>
-<table>
-    <thead>
-        <tr>
-        <?foreach($this->t->getFields() as $field):?>
-            <td>
-                <//?=$field['title']?>
-            </td>
-        <?endforeach;?>
-        </tr>
-    </thead>
-    <tbody>
-        <?foreach($this->t->getTableData(1) as $row):?>
-        <tr>
-            <?foreach($this->t->getFields() as $field) if($field['isVisible']==1):?>
-            <td>
-                <?=$row[$field['name']]?>
-            </td>
-            <?endif;?>
-        </tr>
-        <?endforeach;?>
-    </tbody>
-</table>
 <div id="div_context2">
 <?if($this->data) foreach ($this->data as $arStore): ?>
 <!-- ЗАГОЛОВОК ОРГАНИЗАЦИИ - начало -->
